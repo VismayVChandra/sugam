@@ -1,6 +1,6 @@
 # Sugam — pitch script
 
-Built for a ~3 minute demo + Q&A slot (typical hackathon pitch length — adjust the timing below if your actual slot is different). Lead with the live demo, not slides. Rehearse this out loud at least twice before you're on stage; saying it once in your head is not the same as saying it with a mic in your hand.
+Built for a ~3-4 minute demo + Q&A slot (typical hackathon pitch length — adjust the timing below if your actual slot is different; steps 1-6 below run closer to 4 minutes now that the second-site demo is in, so cut step 4 (guided form fill) first if you're tight on time — the second-site beat in step 5 matters more). Lead with the live demo, not slides. Rehearse this out loud at least twice before you're on stage; saying it once in your head is not the same as saying it with a mic in your hand.
 
 ---
 
@@ -8,7 +8,8 @@ Built for a ~3 minute demo + Q&A slot (typical hackathon pitch length — adjust
 
 - [ ] `npm run dev` already running, `localhost:5173` already open in a tab, zoomed to a readable size
 - [ ] Brave Shields **off** for localhost:5173 (or use Chrome) — mic will fail otherwise
-- [ ] Mic permission already granted once before walking on stage (don't let the permission popup eat your demo time)
+- [ ] Mic **and camera** permission already granted once before walking on stage (don't let the permission popup eat your demo time — this now matters for the Sign tab too if you're doing it)
+- [ ] Both routes (`/` and `/gov`) already loaded once each, so switching between them on stage is instant
 - [ ] Phone charged and unlocked with a document/photo ready if you're doing the photo-fill demo, OR a photo already saved that you'll upload from the laptop instead — laptop upload is safer than relying on venue WiFi + phone camera in the moment
 - [ ] Groq key confirmed working (say something in the Read & Simplify tab once, backstage, to be sure)
 - [ ] One teammate on the mic, one person quietly ready to click through the UI if the speaker's hands are full
@@ -58,11 +59,29 @@ Say this while doing it, not before:
 
 Don't do all three fields live unless you have time to spare — one field proves the mechanism.
 
-## 5. Close — zoom back out (20 seconds)
+## 5. Live demo — the second site (30 seconds, your strongest beat)
 
-> "This isn't three separate hacks. It's one core that adapts to whatever's in front of it. Right now that's a mock bank. The same core drops onto a government form page or a hospital portal without being rebuilt. That's what makes this scale to the actual size of the problem statement — five domains, four barriers — instead of one app at a time."
+Don't just claim "it works on any portal" — show it:
+
+> "Here's the actual proof. Same Sugam layer, zero changes to its code, dropped onto a completely different site."
+
+- Click "Government demo" in the top bar (a National Scholarship Portal — different data, different visual design, deliberately)
+- Open Sugam, ask a domain question: **"What's my application status?"**
+- Optionally: say "high contrast" or "scroll down" to show the universal voice *actions* work here too, unchanged
+
+> "Nobody wrote government-specific code in the widget. It just reads whatever site registered itself."
+
+This one demo beat is worth more than any slide claiming "scalable architecture" — you're proving it live.
+
+## 6. Close — zoom back out (20 seconds)
+
+> "This isn't a handful of separate hacks. It's one core that adapts to whatever's in front of it — you just watched it do that twice. That's what makes this scale to the actual size of the problem statement — five domains, four barriers — instead of one app at a time."
 
 Stop talking. Let the demo be the last impression, not a slide.
+
+## Bonus, only if time and confidence allow: the Sign tab
+
+The widget also has a fourth tab — an honest, small MediaPipe hand-tracking proof-of-concept (open palm reads the page aloud, fist stops it). This is higher-risk live (needs decent lighting and a clear hand in frame) — only attempt it if you've rehearsed it working at least twice beforehand. If you do it and it works, say explicitly that it's a proof-of-concept, not full ISL translation — that honesty reads better to judges than an oversold claim.
 
 ---
 

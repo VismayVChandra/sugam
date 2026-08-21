@@ -1,0 +1,90 @@
+/* Deliberately different visual language from the bank demo — serif-ish
+   officialese, navy/orange, boxed sections — to make the reuse claim
+   visible at a glance, not just true in the code. */
+
+.gov-portal {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 0 6rem;
+  font-family: 'Times New Roman', Georgia, serif;
+  color: #1a1a1a;
+}
+
+.gov-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #0b2447;
+  color: #fff;
+  padding: 0.9rem 1rem;
+  font-size: 0.95rem;
+}
+
+.gov-emblem {
+  background: #fff;
+  color: #0b2447;
+  font-weight: 700;
+  font-size: 0.65rem;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+}
+
+.gov-title {
+  font-weight: 700;
+}
+
+.gov-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, #ff9933 33%, #fff 33% 66%, #128807 66%);
+}
+
+.gcard {
+  background: #fdfaf3;
+  border: 1px solid #c8c0a8;
+  border-radius: 2px;
+  margin: 0.9rem 1rem;
+  padding: 0.9rem 1rem;
+}
+
+.gcard-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.82rem;
+  color: #555;
+  font-weight: 700;
+  border-bottom: 1px dotted #c8c0a8;
+  padding-bottom: 0.3rem;
+}
+
+.gcard-value {
+  margin: 0 0 0.2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.gcard-sub {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.gstatus-pill {
+  display: inline-block;
+  background: #fff3cd;
+  color: #7a5c00;
+  border: 1px solid #e0c46c;
+  border-radius: 3px;
+  padding: 0.15em 0.6em;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.gdoc-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+}
+
+.gdoc-list li {
+  margin-bottom: 0.3rem;
+}

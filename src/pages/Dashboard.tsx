@@ -1,5 +1,5 @@
 import { account, subsidy, transactions } from '../data/mockBank'
-import { useKycForm } from '../context/KycFormContext'
+import ContactDetailsForm from '../components/ContactDetailsForm'
 import './Dashboard.css'
 
 // The "existing app" from the architecture diagram — a stand-in bank portal
@@ -48,62 +48,9 @@ export default function Dashboard() {
 
         <section id="kyc-form" className="card">
           <h2 className="card-label">Update KYC details</h2>
-          <KycForm />
+          <ContactDetailsForm />
         </section>
       </main>
     </div>
-  )
-}
-
-function KycForm() {
-  const { values, setField, submitted, submit, reset } = useKycForm()
-
-  if (submitted) {
-    return (
-      <div className="kyc-success">
-        <p>✔ KYC details submitted.</p>
-        <button onClick={reset}>Edit again</button>
-      </div>
-    )
-  }
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        submit()
-      }}
-      className="kyc-form"
-    >
-      <label>
-        Full name
-        <input
-          name="fullName"
-          value={values.fullName}
-          onChange={(e) => setField('fullName', e.target.value)}
-        />
-      </label>
-      <label>
-        Phone number
-        <input
-          name="phone"
-          type="tel"
-          placeholder="10-digit mobile number"
-          value={values.phone}
-          onChange={(e) => setField('phone', e.target.value)}
-        />
-      </label>
-      <label>
-        Address
-        <textarea
-          name="address"
-          rows={2}
-          placeholder="House no., street, city, PIN"
-          value={values.address}
-          onChange={(e) => setField('address', e.target.value)}
-        />
-      </label>
-      <button type="submit">Submit</button>
-    </form>
   )
 }

@@ -12,6 +12,93 @@ body {
   min-height: 100vh;
 }
 
+html.pref-large-text {
+  font-size: 125%;
+}
+
+html.pref-high-contrast {
+  color-scheme: dark;
+}
+html.pref-high-contrast body {
+  background: #000;
+}
+html.pref-high-contrast .bank-header {
+  background: #000;
+  border-bottom: 2px solid #ffe000;
+}
+html.pref-high-contrast .card,
+html.pref-high-contrast .sugam-panel {
+  background: #000;
+  color: #fff;
+  border: 2px solid #ffe000;
+}
+html.pref-high-contrast .card-label,
+html.pref-high-contrast .sugam-panel-header {
+  color: #ffe000;
+}
+html.pref-high-contrast .card-balance,
+html.pref-high-contrast .card-status,
+html.pref-high-contrast td {
+  color: #fff;
+}
+html.pref-high-contrast td.pos {
+  color: #7CFC00;
+}
+html.pref-high-contrast td.neg {
+  color: #ff6666;
+}
+html.pref-high-contrast .status-pill {
+  background: #ffe000;
+  color: #000;
+}
+html.pref-high-contrast .kyc-form label {
+  color: #fff;
+}
+html.pref-high-contrast .kyc-form input,
+html.pref-high-contrast .kyc-form textarea {
+  background: #111;
+  color: #fff;
+  border: 2px solid #ffe000;
+}
+html.pref-high-contrast .kyc-form button,
+html.pref-high-contrast .sugam-mic,
+html.pref-high-contrast .a11y-bar button {
+  background: #ffe000;
+  color: #000;
+  font-weight: 700;
+}
+html.pref-high-contrast a {
+  color: #ffe000;
+}
+
+html.pref-high-contrast .gov-header {
+  background: #000;
+  border-bottom: 2px solid #ffe000;
+}
+html.pref-high-contrast .gov-emblem {
+  background: #ffe000;
+  color: #000;
+}
+html.pref-high-contrast .gcard {
+  background: #000;
+  color: #fff;
+  border: 2px solid #ffe000;
+}
+html.pref-high-contrast .gcard-label {
+  color: #ffe000;
+  border-bottom-color: #444;
+}
+html.pref-high-contrast .gcard-value,
+html.pref-high-contrast .gcard-sub,
+html.pref-high-contrast .gdoc-list {
+  color: #fff;
+}
+html.pref-high-contrast .gstatus-pill {
+  background: #ffe000;
+  color: #000;
+  border-color: #ffe000;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

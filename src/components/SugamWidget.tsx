@@ -1,14 +1,18 @@
 import { useRef, useState } from 'react'
 import { isSpeechSupported, listenOnce, speak, SUPPORTED_LANGUAGES } from '../lib/speech'
-import { matchIntent } from '../data/mockBank'
+import { matchIntent } from '../lib/intentMatch'
+import { buildUniversalIntents } from '../lib/universalIntents'
 import { extractText } from '../lib/ocr'
 import { simplifyText, SimplifyConfigError } from '../lib/simplify'
 import { extractKycFields } from '../lib/extractFields'
 import { normalizePhone } from '../lib/phone'
+import { useTargetSite } from '../context/TargetSiteContext'
+import { useUiPrefs } from '../context/UiPrefsContext'
 import { KYC_FIELDS, useKycForm, type KycValues } from '../context/KycFormContext'
+import SignPanel from './SignPanel'
 import './SugamWidget.css'
 
-type Tab = 'voice' | 'read' | 'form'
+type Tab = 'voice' | 'read' | 'form' | 'sign'
 
 function highlight(id: string) {
   const el = document.getElementById(id)
@@ -47,11 +51,15 @@ export default function SugamWidget() {
               <button className={tab === 'form' ? 'active' : ''} onClick={() => setTab('form')}>
                 Fill form
               </button>
+              <button className={tab === 'sign' ? 'active' : ''} onClick={() => setTab('sign')}>
+                Sign
+              </button>
             </div>
           </div>
           {tab === 'voice' && <VoicePanel />}
           {tab === 'read' && <ReadPanel />}
           {tab === 'form' && <FormAssistPanel />}
+          {tab === 'sign' && <SignPanel />}
         </div>
       )}
     </>
@@ -59,6 +67,8 @@ export default function SugamWidget() {
 }
 
 function VoicePanel() {
+  const site = useTargetSite()
+  const uiPrefs = useUiPrefs()
   const [lang, setLang] = useState<string>(SUPPORTED_LANGUAGES[0].code)
   const [listening, setListening] = useState(false)
   const [transcript, setTranscript] = useState('')
@@ -76,11 +86,13 @@ function VoicePanel() {
     try {
       const { transcript: t } = await listenOnce(lang)
       setTranscript(t)
-      const intent = matchIntent(t)
+      const allIntents = [...site.intents, ...buildUniversalIntents(uiPrefs)]
+      const intent = matchIntent(t, allIntents)
       if (intent) {
-        const response = intent.answer(lang)
+        const response = intent.answer()
         setAnswer(response)
         highlight(intent.id)
+        intent.run?.()
         await speak(response, lang)
       } else {
         const response = "Sorry, I didn't catch a command I recognize. Try asking about your balance, subsidy, or transactions."
@@ -110,7 +122,7 @@ function VoicePanel() {
       <button className="sugam-mic" onClick={handleMic} disabled={listening}>
         {listening ? 'Listening…' : '🎙 Speak a command'}
       </button>
-      <p className="sugam-hint">Try: "What's my balance?" or "Check my LPG subsidy status."</p>
+      <p className="sugam-hint">Try: "What's my balance?", "scroll down", or "high contrast."</p>
 
       {transcript && <p className="sugam-transcript">You said: “{transcript}”</p>}
       {answer && <p className="sugam-answer">{answer}</p>}

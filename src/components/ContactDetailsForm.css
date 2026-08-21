@@ -1,0 +1,52 @@
+.kyc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.kyc-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  color: #444;
+  gap: 0.25rem;
+}
+
+.kyc-form input,
+.kyc-form textarea {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+}
+
+.kyc-form button {
+  align-self: flex-start;
+  background: #1b3a6b;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.kyc-success {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  font-size: 0.9rem;
+  color: #1c7a3f;
+}
+
+.kyc-success button {
+  background: none;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #444;
+}

@@ -185,6 +185,13 @@
   gap: 0.5rem;
 }
 
+.sugam-sign-video {
+  width: 100%;
+  border-radius: 8px;
+  background: #000;
+  transform: scaleX(-1);
+}
+
 .sugam-confirm-actions button:last-child {
   background: none;
   border: 1px solid #d4dcd7;

@@ -1,3 +1,5 @@
+import type { TargetSite, VoiceIntent } from '../context/TargetSiteContext'
+
 // Fake target site data. Sugam is a layer that sits in front of a real
 // banking/govt portal — this stands in for that portal during the demo.
 
@@ -21,15 +23,9 @@ export const transactions = [
   { date: '2026-08-10', desc: 'Electricity Bill', amount: -1120.5 },
 ]
 
-export interface Intent {
-  id: 'balance' | 'subsidy' | 'transactions'
-  keywords: string[]
-  answer: (lang: string) => string
-}
-
 const inr = (n: number) => `₹${Math.abs(n).toFixed(2)}`
 
-export const intents: Intent[] = [
+const bankIntents: VoiceIntent[] = [
   {
     id: 'balance',
     keywords: ['balance', 'बैलेंस', 'बकाया', 'கணக்கு இருப்பு', 'ব্যালেন্স'],
@@ -51,7 +47,11 @@ export const intents: Intent[] = [
   },
 ]
 
-export function matchIntent(transcript: string): Intent | null {
-  const lower = transcript.toLowerCase()
-  return intents.find((intent) => intent.keywords.some((k) => lower.includes(k.toLowerCase()))) ?? null
+export const bankSite: TargetSite = {
+  siteName: 'साथी Bank',
+  intents: bankIntents,
+  pageSummary: () =>
+    `साथी Bank account overview. Balance: ${inr(account.balance)}. ` +
+    `${subsidy.scheme}: ${subsidy.status}, ${inr(subsidy.amount)}, on ${subsidy.date}. ` +
+    `Most recent transaction: ${transactions[0].desc} for ${inr(transactions[0].amount)}.`,
 }

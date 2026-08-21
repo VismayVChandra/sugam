@@ -65,6 +65,10 @@ export function speak(text: string, lang: string): Promise<void> {
   })
 }
 
+export function stopSpeaking() {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+}
+
 export const SUPPORTED_LANGUAGES = [
   { code: 'en-IN', label: 'English' },
   { code: 'hi-IN', label: 'हिन्दी' },
