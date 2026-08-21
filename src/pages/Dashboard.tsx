@@ -1,0 +1,109 @@
+import { account, subsidy, transactions } from '../data/mockBank'
+import { useKycForm } from '../context/KycFormContext'
+import './Dashboard.css'
+
+// The "existing app" from the architecture diagram — a stand-in bank portal
+// that Sugam's widget layers in front of. Element ids here are the scroll
+// targets the voice pipeline highlights.
+
+export default function Dashboard() {
+  return (
+    <div className="dashboard">
+      <header className="bank-header">
+        <span className="bank-logo">सा॑थी Bank</span>
+        <span className="bank-user">{account.holder}</span>
+      </header>
+
+      <main>
+        <h1 className="sr-only">सा॑थी Bank account overview</h1>
+
+        <section id="balance" className="card">
+          <h2 className="card-label">Account {account.number}</h2>
+          <p className="card-balance">₹{account.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+        </section>
+
+        <section id="subsidy" className="card">
+          <h2 className="card-label">{subsidy.scheme}</h2>
+          <p className="card-status">
+            <span className="status-pill">{subsidy.status}</span> ₹{subsidy.amount} on {subsidy.date}
+          </p>
+        </section>
+
+        <section id="transactions" className="card" aria-label="Recent transactions">
+          <h2 className="card-label">Recent transactions</h2>
+          <table>
+            <tbody>
+              {transactions.map((t) => (
+                <tr key={t.date + t.desc}>
+                  <td>{t.date}</td>
+                  <td>{t.desc}</td>
+                  <td className={t.amount < 0 ? 'neg' : 'pos'}>
+                    {t.amount < 0 ? '-' : '+'}₹{Math.abs(t.amount).toFixed(2)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        <section id="kyc-form" className="card">
+          <h2 className="card-label">Update KYC details</h2>
+          <KycForm />
+        </section>
+      </main>
+    </div>
+  )
+}
+
+function KycForm() {
+  const { values, setField, submitted, submit, reset } = useKycForm()
+
+  if (submitted) {
+    return (
+      <div className="kyc-success">
+        <p>✔ KYC details submitted.</p>
+        <button onClick={reset}>Edit again</button>
+      </div>
+    )
+  }
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        submit()
+      }}
+      className="kyc-form"
+    >
+      <label>
+        Full name
+        <input
+          name="fullName"
+          value={values.fullName}
+          onChange={(e) => setField('fullName', e.target.value)}
+        />
+      </label>
+      <label>
+        Phone number
+        <input
+          name="phone"
+          type="tel"
+          placeholder="10-digit mobile number"
+          value={values.phone}
+          onChange={(e) => setField('phone', e.target.value)}
+        />
+      </label>
+      <label>
+        Address
+        <textarea
+          name="address"
+          rows={2}
+          placeholder="House no., street, city, PIN"
+          value={values.address}
+          onChange={(e) => setField('address', e.target.value)}
+        />
+      </label>
+      <button type="submit">Submit</button>
+    </form>
+  )
+}

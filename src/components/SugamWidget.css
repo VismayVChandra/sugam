@@ -1,0 +1,196 @@
+.sugam-fab {
+  position: fixed;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: #0e6e64;
+  color: #fff;
+  font-size: 1.4rem;
+  box-shadow: 0 8px 24px -8px rgba(14, 110, 100, 0.6);
+  cursor: pointer;
+  z-index: 50;
+}
+
+.sugam-panel {
+  position: fixed;
+  right: 1.1rem;
+  bottom: 4.6rem;
+  width: min(340px, calc(100vw - 2.2rem));
+  max-height: 70vh;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #d4dcd7;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px -12px rgba(21, 32, 28, 0.35);
+  z-index: 50;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.sugam-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem 0.6rem;
+  border-bottom: 1px solid #eef2ef;
+  font-weight: 700;
+  color: #15201c;
+}
+
+.sugam-tabs {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.sugam-tabs button {
+  border: none;
+  background: #eef2ef;
+  color: #45524b;
+  font-size: 0.72rem;
+  padding: 0.35em 0.6em;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.sugam-tabs button.active {
+  background: #dcede9;
+  color: #0e6e64;
+  font-weight: 700;
+}
+
+.sugam-tabpanel {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.sugam-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: #45524b;
+}
+
+.sugam-field select,
+.sugam-field input {
+  font: inherit;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #d4dcd7;
+  border-radius: 6px;
+}
+
+.sugam-mic {
+  background: #0e6e64;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.sugam-mic:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.sugam-hint {
+  font-size: 0.78rem;
+  color: #45524b;
+  margin: 0;
+}
+
+.sugam-transcript {
+  font-size: 0.85rem;
+  color: #45524b;
+  margin: 0;
+  font-style: italic;
+}
+
+.sugam-answer {
+  background: #dcede9;
+  color: #15201c;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.sugam-error {
+  color: #b3401e;
+  font-size: 0.82rem;
+  margin: 0;
+}
+
+.sugam-raw {
+  font-size: 0.8rem;
+  color: #45524b;
+}
+
+.sugam-raw summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.sugam-simplified {
+  background: #eef2ef;
+  border-radius: 8px;
+  padding: 0.7rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sugam-simplified p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #15201c;
+}
+
+.sugam-simplified button {
+  align-self: flex-start;
+  background: #0e6e64;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.sugam-review {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sugam-form-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.sugam-form-log p {
+  margin: 0;
+}
+
+.sugam-confirm-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sugam-confirm-actions button:last-child {
+  background: none;
+  border: 1px solid #d4dcd7;
+  color: #45524b;
+  border-radius: 8px;
+  padding: 0.6rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}

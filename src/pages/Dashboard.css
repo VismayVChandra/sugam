@@ -1,0 +1,136 @@
+/* Deliberately plain "existing bank portal" look — the whole point is that
+   Sugam adapts an ordinary, unremarkable site, not a bespoke pretty one. */
+
+.dashboard {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 0 6rem;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1a1a1a;
+}
+
+.bank-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1b3a6b;
+  color: #fff;
+  padding: 0.9rem 1rem;
+  font-size: 0.95rem;
+}
+
+.bank-logo {
+  font-weight: 700;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  margin: 0.75rem 1rem;
+  padding: 0.9rem 1rem;
+}
+
+.card-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.card-balance {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.card-status {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.status-pill {
+  display: inline-block;
+  background: #e5f4ea;
+  color: #1c7a3f;
+  border-radius: 3px;
+  padding: 0.1em 0.5em;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-right: 0.4em;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+td {
+  padding: 0.4rem 0.2rem;
+  border-bottom: 1px solid #eee;
+}
+
+td.neg {
+  color: #b3401e;
+  text-align: right;
+}
+
+td.pos {
+  color: #1c7a3f;
+  text-align: right;
+}
+
+.kyc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.kyc-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  color: #444;
+  gap: 0.25rem;
+}
+
+.kyc-form input,
+.kyc-form textarea {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+}
+
+.kyc-form button {
+  align-self: flex-start;
+  background: #1b3a6b;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.kyc-success {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  font-size: 0.9rem;
+  color: #1c7a3f;
+}
+
+.kyc-success button {
+  background: none;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #444;
+}
