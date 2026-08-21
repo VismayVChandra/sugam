@@ -1,10 +1,11 @@
 import type { TargetSite, VoiceIntent } from '../context/TargetSiteContext'
+import { REGISTERED_USER } from './registeredUser'
 
 // Fake target site data. Sugam is a layer that sits in front of a real
 // banking/govt portal — this stands in for that portal during the demo.
 
 export const account = {
-  holder: 'Ramesh Kumar',
+  holder: REGISTERED_USER.name,
   number: 'XXXX XXXX 4821',
   balance: 12450.75,
 }
@@ -28,17 +29,20 @@ const inr = (n: number) => `₹${Math.abs(n).toFixed(2)}`
 const bankIntents: VoiceIntent[] = [
   {
     id: 'balance',
+    label: "What's my balance?",
     keywords: ['balance', 'बैलेंस', 'बकाया', 'கணக்கு இருப்பு', 'ব্যালেন্স'],
     answer: () => `Your account balance is ${inr(account.balance)}.`,
   },
   {
     id: 'subsidy',
+    label: 'Check my LPG subsidy status',
     keywords: ['subsidy', 'lpg', 'सब्सिडी', 'गैस', 'மானியம்', 'ভর্তুকি'],
     answer: () =>
       `Your ${subsidy.scheme} of ${inr(subsidy.amount)} was ${subsidy.status.toLowerCase()} on ${subsidy.date}.`,
   },
   {
     id: 'transactions',
+    label: 'Show my recent transactions',
     keywords: ['transaction', 'लेनदेन', 'history', 'இடபாடு', 'লেনদেন'],
     answer: () => {
       const last = transactions[0]

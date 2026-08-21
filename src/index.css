@@ -99,6 +99,31 @@ html.pref-high-contrast .gstatus-pill {
   border-color: #ffe000;
 }
 
+html.pref-high-contrast .health-header {
+  background: #000;
+  border: 2px solid #ffe000;
+}
+html.pref-high-contrast .health-cross {
+  background: #ffe000;
+  color: #000;
+}
+html.pref-high-contrast .hcard {
+  background: #000;
+  color: #fff;
+  border: 2px solid #ffe000;
+}
+html.pref-high-contrast .hcard-label {
+  color: #ffe000;
+}
+html.pref-high-contrast .hcard-value,
+html.pref-high-contrast .hcard-sub {
+  color: #fff;
+}
+html.pref-high-contrast .hstatus-pill {
+  background: #ffe000;
+  color: #000;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

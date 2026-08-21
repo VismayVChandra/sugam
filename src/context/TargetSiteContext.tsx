@@ -12,6 +12,8 @@ export interface VoiceIntent {
   answer: () => string
   /** Optional side effect beyond speaking an answer — e.g. scroll, submit, resize text. */
   run?: () => void
+  /** Human-readable example phrase shown in the "what can I say?" helper. Falls back to keywords[0]. */
+  label?: string
 }
 
 export interface TargetSite {

@@ -1,0 +1,78 @@
+/* Calmer, rounder, softer than either the bank or the government demo —
+   third distinct visual language, same reused components underneath. */
+
+.health-portal {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 0 6rem;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #1c3d3a;
+}
+
+.health-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #146b60;
+  color: #fff;
+  padding: 1rem 1.1rem;
+  font-size: 1rem;
+  border-radius: 0 0 18px 18px;
+}
+
+.health-cross {
+  background: #fff;
+  color: #146b60;
+  font-weight: 800;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1rem;
+}
+
+.health-title {
+  font-weight: 700;
+}
+
+.hcard {
+  background: #f2fbf9;
+  border: 1px solid #cdeae4;
+  border-radius: 16px;
+  margin: 0.9rem 1rem;
+  padding: 1rem 1.2rem;
+}
+
+.hcard-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  color: #146b60;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hcard-value {
+  margin: 0 0 0.2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.hcard-sub {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #4a6b67;
+}
+
+.hstatus-pill {
+  display: inline-block;
+  margin-top: 0.5rem;
+  background: #fdf0d5;
+  color: #6b4900;
+  border-radius: 999px;
+  padding: 0.2em 0.7em;
+  font-size: 0.78rem;
+  font-weight: 700;
+}

@@ -122,7 +122,18 @@ function VoicePanel() {
       <button className="sugam-mic" onClick={handleMic} disabled={listening}>
         {listening ? 'Listening…' : '🎙 Speak a command'}
       </button>
-      <p className="sugam-hint">Try: "What's my balance?", "scroll down", or "high contrast."</p>
+
+      <details className="sugam-raw">
+        <summary>What can I say?</summary>
+        <ul className="sugam-command-list">
+          {site.intents.map((i) => (
+            <li key={i.id}>{i.label ?? i.keywords[0]}</li>
+          ))}
+          {buildUniversalIntents(uiPrefs).map((i) => (
+            <li key={i.id}>{i.label ?? i.keywords[0]}</li>
+          ))}
+        </ul>
+      </details>
 
       {transcript && <p className="sugam-transcript">You said: “{transcript}”</p>}
       {answer && <p className="sugam-answer">{answer}</p>}
@@ -132,11 +143,14 @@ function VoicePanel() {
 }
 
 function ReadPanel() {
+  const [lang, setLang] = useState<string>(SUPPORTED_LANGUAGES[0].code)
   const [rawText, setRawText] = useState('')
   const [simplified, setSimplified] = useState('')
   const [status, setStatus] = useState<'idle' | 'ocr' | 'simplifying' | 'done'>('idle')
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState('')
+
+  const langLabel = SUPPORTED_LANGUAGES.find((l) => l.code === lang)?.label ?? 'English'
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -150,7 +164,7 @@ function ReadPanel() {
       const text = await extractText(file, setProgress)
       setRawText(text)
       setStatus('simplifying')
-      const simple = await simplifyText(text)
+      const simple = await simplifyText(text, langLabel)
       setSimplified(simple)
       setStatus('done')
     } catch (err) {
@@ -167,12 +181,23 @@ function ReadPanel() {
   return (
     <div className="sugam-tabpanel">
       <label className="sugam-field">
+        Language for the simplified text
+        <select value={lang} onChange={(e) => setLang(e.target.value)}>
+          {SUPPORTED_LANGUAGES.map((l) => (
+            <option key={l.code} value={l.code}>
+              {l.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="sugam-field">
         Photograph a form, bill or prescription
         <input type="file" accept="image/*" capture="environment" onChange={handleFile} />
       </label>
 
       {status === 'ocr' && <p className="sugam-hint">Reading text… {progress}%</p>}
-      {status === 'simplifying' && <p className="sugam-hint">Simplifying…</p>}
+      {status === 'simplifying' && <p className="sugam-hint">Simplifying, in {langLabel}…</p>}
 
       {rawText && (
         <details className="sugam-raw">
@@ -184,7 +209,7 @@ function ReadPanel() {
       {simplified && (
         <div className="sugam-simplified">
           <p>{simplified}</p>
-          <button onClick={() => speak(simplified, 'en-IN')}>🔊 Read aloud</button>
+          <button onClick={() => speak(simplified, lang)}>🔊 Read aloud</button>
         </div>
       )}
 

@@ -185,6 +185,17 @@
   gap: 0.5rem;
 }
 
+.sugam-command-list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+  color: #45524b;
+}
+
+.sugam-command-list li {
+  margin-bottom: 0.25rem;
+}
+
 .sugam-sign-video {
   width: 100%;
   border-radius: 8px;

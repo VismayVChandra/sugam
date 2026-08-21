@@ -1,11 +1,12 @@
 import type { TargetSite, VoiceIntent } from '../context/TargetSiteContext'
+import { REGISTERED_USER } from './registeredUser'
 
 // A second, unrelated portal — deliberately different domain, different
 // data shape, different visual design — to prove the Sugam layer isn't
 // secretly banking-specific.
 
 export const applicant = {
-  name: 'Ramesh Kumar',
+  name: REGISTERED_USER.name,
   applicationId: 'NSP-2026-0417332',
 }
 
@@ -21,17 +22,20 @@ export const documentsRequired = ['Aadhaar card', 'Income certificate', 'Bank pa
 const govIntents: VoiceIntent[] = [
   {
     id: 'app-status',
+    label: "What's my application status?",
     keywords: ['status', 'आवेदन', 'स्थिति', 'விண்ணப்ப நிலை'],
     answer: () => `Your application ${applicant.applicationId} is currently ${scholarship.status.toLowerCase()}.`,
   },
   {
     id: 'scholarship-amount',
+    label: 'How much is the scholarship amount?',
     keywords: ['amount', 'scholarship', 'राशि', 'தொகை'],
     answer: () =>
       `Your ${scholarship.name} is ₹${scholarship.amount}, expected by ${scholarship.expectedDate}, pending verification.`,
   },
   {
     id: 'documents',
+    label: 'What documents do I need?',
     keywords: ['document', 'दस्तावेज़', 'papers', 'ஆவணங்கள்'],
     answer: () => `You need to submit: ${documentsRequired.join(', ')}.`,
   },

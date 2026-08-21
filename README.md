@@ -4,30 +4,45 @@ One accessibility layer for banking, government, healthcare and education apps �
 
 Full concept, API stack, architecture and build plan: see the [pitch artifact](https://claude.ai/code/artifact/37181e55-e8b7-436f-87b6-47370d63e8fc).
 
+## Flow
+
+`/` → **login** (if not signed in) → **home** (choose a demo site) → `/bank`, `/gov`, or `/health`, each protected by `RequireAuth`.
+
 ## What's here
 
-Two independent demo sites, proving the same layer works on both without any widget code changing between them:
+**Real authentication, via Supabase.** `src/context/AuthContext.tsx` wraps Supabase Auth: passwords are hashed and verified server-side, sessions are signed JWTs Supabase issues and refreshes — none of that logic lives in this app, which is exactly why it's actually secure rather than a rolled-your-own scheme. `src/pages/LoginScreen.tsx` is a real email/password sign-in/sign-up form. It still demonstrates the accessibility pitch, honestly this time: 🎙 say your email and 📷 photograph any document with an email on it both autofill the *email* field only (`lib/email.ts`) — the password is always typed, masked, never spoken or photographed, because dictating or photographing a password would defeat the point of having one.
 
-- `src/pages/Dashboard.tsx` (route `/`) — a mock bank portal. Deliberately plain — the point is Sugam layers onto an ordinary site, not a bespoke one.
-- `src/pages/GovPortal.tsx` (route `/gov`) — a mock National Scholarship Portal. Different domain, different data shape, deliberately different visual design (navy/serif/tricolour vs. the bank's blue/Arial), same `ContactDetailsForm` and same `SugamWidget` mounted unmodified.
-- `src/context/TargetSiteContext.tsx` is what makes that reuse real rather than cosmetic: each page registers its own voice intents and page summary; `SugamWidget` never imports site-specific data directly.
-- `src/components/AccessibilityBar.tsx` — always-visible chrome (not buried in the widget): the Bank/Government demo switcher, a one-tap "read this page aloud," and large-text/high-contrast toggles (`src/context/UiPrefsContext.tsx`).
-- `src/components/SugamWidget.tsx` — the on-demand layer: a floating widget with four tabs.
-  - **Voice** (Pillar 1): speak a command — per-site intents (balance/subsidy/transactions, or application status/amount/documents) plus universal actions available on every site for free (`src/lib/universalIntents.ts`): "scroll down/up," "submit," "large text," "high contrast." Web Speech API baseline — see `src/lib/speech.ts` for the Bhashini/Sarvam swap point.
-  - **Read & simplify** (Pillar 2): photograph a document, OCR via Tesseract.js (`src/lib/ocr.ts`), simplified via Groq (`src/lib/simplify.ts`), read back aloud.
-  - **Fill form** (Pillar 5): voice-guided field-by-field fill with a "sounds right? / try again" check per field, or photo-ID autofill via `src/lib/extractFields.ts`.
-  - **Sign** (Pillar 3, honest proof-of-concept): MediaPipe hand-tracking (`@mediapipe/tasks-vision`), two gestures only — open palm reads the page aloud, fist stops it. See `src/lib/handGesture.ts` for why this is landmark geometry, not a trained classifier.
-- PWA-enabled via `vite-plugin-pwa` (offline shell caching, installable).
+**Three independent demo sites**, proving the same layer works on all of them without any widget code changing between them:
+
+- `src/pages/Dashboard.tsx` (`/bank`) — a mock bank portal. Deliberately plain — the point is Sugam layers onto an ordinary site, not a bespoke one.
+- `src/pages/GovPortal.tsx` (`/gov`) — a mock National Scholarship Portal. Navy/serif/tricolour, entirely different data shape.
+- `src/pages/HealthPortal.tsx` (`/health`) — a mock hospital appointment/prescription portal. Rounded/teal, a third domain again.
+- `src/context/TargetSiteContext.tsx` is what makes the reuse real rather than cosmetic: each page registers its own voice intents and page summary; `SugamWidget` never imports site-specific data directly. `src/pages/HomePage.tsx` is the post-login site chooser.
+
+**Always-visible accessibility bar** (`src/components/AccessibilityBar.tsx`, not buried in the widget): site switcher, one-tap "read this page aloud," large-text/high-contrast toggles (`src/context/UiPrefsContext.tsx`), log out.
+
+**`src/components/SugamWidget.tsx`** — the on-demand layer: a floating widget with four tabs.
+
+- **Voice** (Pillar 1): speak a command — per-site intents (balance/subsidy/transactions, application status/amount/documents, appointment/prescription/doctor) plus universal actions available on every site for free (`src/lib/universalIntents.ts`): "scroll down/up," "submit," "large text," "high contrast." A "What can I say?" list shows every available command per site. Web Speech API baseline — see `speech.ts` for the Bhashini/Sarvam swap point.
+- **Read & simplify** (Pillar 2): photograph a document, OCR via Tesseract.js, simplified via Groq **in the language you pick** — English or any of the 6 listed Indian languages, not English-only.
+- **Fill form** (Pillar 5): voice-guided field-by-field fill with a "sounds right? / try again" check per field, or photo-ID autofill.
+- **Sign** (Pillar 3, honest proof-of-concept): MediaPipe hand-tracking, two gestures only — open palm reads the page aloud, fist stops it. See `src/lib/handGesture.ts` for why this is landmark geometry, not a trained classifier.
+
+PWA-enabled via `vite-plugin-pwa` (offline shell caching, installable).
 
 ## Setup
 
 ```bash
 npm install
-cp .env.example .env.local   # add VITE_GROQ_API_KEY at minimum
+cp .env.example .env.local   # add VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, and VITE_GROQ_API_KEY
 npm run dev
 ```
 
-Voice recognition/synthesis and the Sign tab need Chrome/Brave (Web Speech API + camera) with Shields off if using Brave. OCR and both dashboards work in any browser. The Sign tab needs an internet connection the first time (it fetches the hand-tracking model from a CDN) and a webcam.
+Create a real account on the sign-up form (any email/password) — there's no seeded demo login for auth, since it's real. The mock data shown on all three sites (name "Ramesh Kumar", balances, etc.) is unrelated to whichever account you sign in with — see `src/data/registeredUser.ts`.
+
+**For a smooth demo:** Supabase requires email confirmation by default, which will block sign-in on stage if you can't reach the confirmation inbox. In your Supabase dashboard: Authentication → Providers → Email → turn off "Confirm email" before your pitch, or use an email account you can actually check.
+
+Voice recognition/synthesis and the Sign tab need Chrome/Brave (Web Speech API + camera) with Shields off if using Brave. OCR and the dashboards work in any browser. The Sign tab needs an internet connection the first time (it fetches the hand-tracking model from a CDN) and a webcam.
 
 ## Where this sits in the build plan
 
@@ -37,18 +52,19 @@ Voice recognition/synthesis and the Sign tab need Chrome/Brave (Web Speech API +
 | 1–7 Pillar 1: voice navigation | done |
 | 7–13 Pillar 2: read-aloud & simplify | done |
 | 13–17 Stretch: guided form fill | done |
-| 17–20 Accessibility audit & polish | done — axe-core: 0 violations across both sites, all widget tabs, and both large-text/high-contrast states |
-| 20–24 Buffer & pitch | in progress — added second target site, read-page-aloud, text/contrast toggle + voice actions, and the Sign tab during this window |
+| 17–20 Accessibility audit & polish | done — axe-core: 0 violations across login, home, all three sites, all widget tabs, and high-contrast state on each |
+| 20–24 Buffer & pitch | in progress — added real Supabase authentication (replacing an earlier demo-only login), a home/login flow with accessible email-autofill helpers, a third target site, per-language read & simplify, and a commands helper during this window, on top of the earlier second site + accessibility bar + voice actions + Sign tab |
 
 ## Accessibility audit notes
 
-Ran axe-core against both dashboards and every Sugam widget tab/state, including high-contrast mode on both sites. Fixed everything it found: missing `<main>`/`<h1>` landmarks, card labels not being real headings, and a color-contrast failure on the accessibility bar's own buttons (fixed by swapping to a solid white/teal pairing instead of translucent white on teal). Re-ran after each fix: 0 violations everywhere.
+Ran axe-core against every page and every widget tab/state, including high-contrast mode. Fixed everything found across two passes: missing `<main>`/`<h1>` landmarks (dashboard, login, home), card labels not being real headings, a color-contrast failure on the accessibility bar's own buttons, an unlandmarked "Log out" link, and three color-contrast failures in the health portal's teal/amber palette. Re-ran after each fix: 0 violations everywhere.
 
-Not yet tested: real screen reader (NVDA/VoiceOver) pass, real throttled-network conditions, real low-end device, and the Sign tab's actual gesture accuracy (only verifiable with a real webcam, not this sandboxed environment — the model loads and runs, but hold-time/lighting tuning needs a live camera).
+Not yet tested: real screen reader (NVDA/VoiceOver) pass, real throttled-network conditions, real low-end device, and the Sign tab's actual gesture accuracy (only verifiable with a real webcam — the model loads and runs here, but hold-time/lighting tuning needs a live camera).
 
 ## Known gaps (by design, for the demo)
 
+- Authentication is real (Supabase), but there's no email/password strength policy or rate-limiting configured beyond Supabase's defaults — fine for a hackathon demo, worth hardening (and adding MFA) before any real deployment.
 - Voice intent matching is keyword-based, not a real NLU — fine for a handful of intents per site, note it honestly if asked.
-- No backend — everything runs client-side, calling Groq directly from the browser. Do not ship the Groq key in this form past the hackathon.
+- No backend beyond Supabase Auth — Groq, OCR, and everything else still runs client-side. Do not ship the Groq key in this form past the hackathon.
 - Only English/Hindi keywords are populated per intent; other listed languages transcribe but won't always match an intent yet.
 - The Sign tab is explicitly a proof-of-concept: two gestures via landmark geometry, not real ISL. Say so if asked — see `PITCH.md`.
