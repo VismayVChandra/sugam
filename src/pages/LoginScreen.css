@@ -4,44 +4,51 @@
   align-items: center;
   justify-content: center;
   padding: 2rem 1.2rem;
-  background: linear-gradient(160deg, #eef2ef 0%, #dcede9 100%);
-  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--sugam-bg);
+  font-family: var(--sugam-font-sans);
 }
 
 .login-card {
   max-width: 460px;
   width: 100%;
-  background: #fff;
-  border-radius: 16px;
+  background: var(--sugam-surface);
+  border: 1px solid var(--sugam-border);
+  border-radius: var(--sugam-radius-xl);
   padding: 2rem 2rem 2.2rem;
-  box-shadow: 0 20px 50px -20px rgba(21, 32, 28, 0.35);
+  box-shadow: var(--sugam-shadow);
+}
+
+.login-card .sugam-wordmark {
+  margin-bottom: 1.3rem;
 }
 
 .login-eyebrow {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #0e6e64;
+  color: var(--sugam-primary);
   font-weight: 700;
   margin: 0 0 0.5rem;
 }
 
 .login-card h1 {
   margin: 0 0 0.6rem;
+  font-family: var(--sugam-font-serif);
   font-size: 1.5rem;
-  color: #15201c;
+  font-weight: 600;
+  color: var(--sugam-ink);
 }
 
 .login-lede {
   font-size: 0.88rem;
-  color: #45524b;
+  color: var(--sugam-muted);
   margin: 0 0 1.3rem;
   line-height: 1.5;
 }
 
 .login-lede code {
   font-size: 0.85em;
-  background: #eef2ef;
+  background: var(--sugam-bg);
   padding: 0.1em 0.35em;
   border-radius: 4px;
 }
@@ -52,45 +59,63 @@
   gap: 0.7rem;
   margin-bottom: 1.4rem;
   padding-bottom: 1.4rem;
-  border-bottom: 1px solid #eef2ef;
+  border-bottom: 1px solid var(--sugam-border);
 }
 
-.login-helper button,
-.login-helper .login-file {
+.login-helper-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   width: 100%;
   box-sizing: border-box;
+  background: var(--sugam-surface);
+  color: var(--sugam-primary);
+  border: 1.5px solid var(--sugam-primary);
+  border-radius: var(--sugam-radius-md);
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.login-helper-btn:hover:not(:disabled) {
+  background: var(--sugam-teal-wash);
+}
+
+.login-helper-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .login-helper-hint {
   font-size: 0.76rem;
-  color: #0e6e64;
+  color: var(--sugam-primary);
   margin: 0.35rem 0 0;
 }
 
 .login-action {
-  background: #0e6e64;
-  color: #fff;
+  background: var(--sugam-primary);
+  color: var(--sugam-primary-fg);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--sugam-radius-md);
   padding: 0.6rem 0.8rem;
   font-size: 0.92rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.login-action:hover:not(:disabled) {
+  background: var(--sugam-primary-hover);
 }
 
 .login-action:disabled {
   opacity: 0.6;
   cursor: default;
-}
-
-.login-file {
-  display: inline-block;
-  background: #0e6e64;
-  color: #fff;
-  border-radius: 8px;
-  padding: 0.55rem 0.7rem;
-  font-size: 0.84rem;
-  text-align: center;
-  cursor: pointer;
 }
 
 .login-file input {
@@ -108,15 +133,17 @@
   flex-direction: column;
   gap: 0.3rem;
   font-size: 0.82rem;
-  color: #45524b;
+  color: var(--sugam-muted);
 }
 
 .login-form input {
   font: inherit;
   font-size: 0.92rem;
   padding: 0.5rem 0.6rem;
-  border: 1px solid #bbb;
-  border-radius: 6px;
+  border: 1px solid var(--sugam-border);
+  border-radius: var(--sugam-radius-sm);
+  background: var(--sugam-surface);
+  color: var(--sugam-ink);
 }
 
 .login-toggle-mode {
@@ -125,7 +152,7 @@
   text-align: center;
   background: none;
   border: none;
-  color: #0e6e64;
+  color: var(--sugam-primary);
   font-size: 0.82rem;
   font-weight: 600;
   margin-top: 1rem;
@@ -135,12 +162,37 @@
 
 .login-hint-fail {
   font-size: 0.78rem;
-  color: #b3401e;
+  color: var(--sugam-danger);
   margin: 0.6rem 0 0;
 }
 
 .login-hint-ok {
   font-size: 0.8rem;
-  color: #0e6e64;
+  color: var(--sugam-primary);
   margin: 0.6rem 0 0;
+}
+
+/* High contrast */
+html.pref-high-contrast .login-screen {
+  background: #000;
+}
+html.pref-high-contrast .login-card {
+  background: #000;
+  border: 2px solid #ffe000;
+}
+html.pref-high-contrast .login-card h1 {
+  color: #fff;
+}
+html.pref-high-contrast .login-lede,
+html.pref-high-contrast .login-form label {
+  color: #ccc;
+}
+html.pref-high-contrast .login-form input {
+  background: #111;
+  color: #fff;
+  border-color: #ffe000;
+}
+html.pref-high-contrast .login-action {
+  background: #ffe000;
+  color: #000;
 }

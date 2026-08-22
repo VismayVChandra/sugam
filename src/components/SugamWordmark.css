@@ -1,0 +1,17 @@
+.sugam-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sugam-wordmark-text {
+  font-family: var(--sugam-font-serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--sugam-ink);
+}
+
+html.pref-high-contrast .sugam-wordmark-text {
+  color: #fff;
+}

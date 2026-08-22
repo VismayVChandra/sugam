@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { X, Mic, FileText, ClipboardList, Hand } from 'lucide-react'
 import { isSpeechSupported, listenOnce, speak, SUPPORTED_LANGUAGES } from '../lib/speech'
 import { matchIntent } from '../lib/intentMatch'
 import { buildUniversalIntents } from '../lib/universalIntents'
@@ -10,9 +11,17 @@ import { useTargetSite } from '../context/TargetSiteContext'
 import { useUiPrefs } from '../context/UiPrefsContext'
 import { KYC_FIELDS, useKycForm, type KycValues } from '../context/KycFormContext'
 import SignPanel from './SignPanel'
+import SugamWordmark from './SugamWordmark'
 import './SugamWidget.css'
 
 type Tab = 'voice' | 'read' | 'form' | 'sign'
+
+const TABS: { id: Tab; label: string; Icon: typeof Mic }[] = [
+  { id: 'voice', label: 'Voice', Icon: Mic },
+  { id: 'read', label: 'Simplify', Icon: FileText },
+  { id: 'form', label: 'Fill form', Icon: ClipboardList },
+  { id: 'sign', label: 'Sign', Icon: Hand },
+]
 
 function highlight(id: string) {
   const el = document.getElementById(id)
@@ -28,34 +37,41 @@ export default function SugamWidget() {
 
   return (
     <>
-      <button
-        className="sugam-fab"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-label={open ? 'Close Sugam accessibility assistant' : 'Open Sugam accessibility assistant'}
-      >
-        {open ? '✕' : '◆'}
-      </button>
+      {!open && (
+        <button
+          className="sugam-fab"
+          onClick={() => setOpen(true)}
+          aria-expanded={open}
+          aria-label="Open Sugam accessibility assistant"
+        >
+          <SugamWordmark showWord={false} size={30} />
+        </button>
+      )}
 
       {open && (
         <div className="sugam-panel" role="dialog" aria-label="Sugam accessibility assistant">
           <div className="sugam-panel-header">
-            <span>Sugam</span>
-            <div className="sugam-tabs">
-              <button className={tab === 'voice' ? 'active' : ''} onClick={() => setTab('voice')}>
-                Voice
-              </button>
-              <button className={tab === 'read' ? 'active' : ''} onClick={() => setTab('read')}>
-                Read &amp; simplify
-              </button>
-              <button className={tab === 'form' ? 'active' : ''} onClick={() => setTab('form')}>
-                Fill form
-              </button>
-              <button className={tab === 'sign' ? 'active' : ''} onClick={() => setTab('sign')}>
-                Sign
-              </button>
+            <div className="sugam-panel-title">
+              <SugamWordmark showWord={false} size={26} />
+              <div>
+                <p className="sugam-panel-title-main">Sugam assistant</p>
+                <p className="sugam-panel-title-sub">Helping on this page</p>
+              </div>
             </div>
+            <button className="sugam-panel-close" onClick={() => setOpen(false)} aria-label="Close Sugam assistant">
+              <X size={18} aria-hidden="true" />
+            </button>
           </div>
+
+          <div className="sugam-tabs">
+            {TABS.map(({ id, label, Icon }) => (
+              <button key={id} className={tab === id ? 'active' : ''} onClick={() => setTab(id)}>
+                <Icon size={16} aria-hidden="true" />
+                {label}
+              </button>
+            ))}
+          </div>
+
           {tab === 'voice' && <VoicePanel />}
           {tab === 'read' && <ReadPanel />}
           {tab === 'form' && <FormAssistPanel />}

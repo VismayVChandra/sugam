@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { isSpeechSupported, listenOnce, speak } from '../lib/speech'
 import { extractText } from '../lib/ocr'
 import { extractEmailFromText, normalizeSpokenEmail } from '../lib/email'
+import SugamWordmark from '../components/SugamWordmark'
 import './LoginScreen.css'
 
 // Real authentication: Supabase verifies the password server-side and
@@ -43,6 +44,7 @@ export default function LoginScreen() {
   return (
     <div className="login-screen">
       <main className="login-card">
+        <SugamWordmark size={34} />
         <p className="login-eyebrow">{mode === 'signin' ? 'Sign in' : 'Create an account'}</p>
         <h1>Sign in the way that works for you</h1>
         <p className="login-lede">
@@ -120,7 +122,7 @@ function VoiceEmailHelper({ onFill }: { onFill: (v: string) => void }) {
 
   return (
     <div className="login-helper">
-      <button onClick={handleClick} disabled={status === 'listening'}>
+      <button className="login-helper-btn" onClick={handleClick} disabled={status === 'listening'}>
         🎙 {status === 'listening' ? 'Listening…' : 'Say your email'}
       </button>
       {heard && <p className="login-helper-hint">Filled: {heard} — check it's right before submitting.</p>}
@@ -152,7 +154,7 @@ function PhotoEmailHelper({ onFill }: { onFill: (v: string) => void }) {
 
   return (
     <div className="login-helper">
-      <label className="login-file">
+      <label className="login-helper-btn login-file">
         📷 {status === 'reading' ? 'Reading…' : 'Autofill email from a photo'}
         <input type="file" accept="image/*" capture="environment" onChange={handleFile} />
       </label>

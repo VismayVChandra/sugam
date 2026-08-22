@@ -1,70 +1,127 @@
 .sugam-fab {
   position: fixed;
-  right: 1.1rem;
-  bottom: 1.1rem;
-  width: 56px;
-  height: 56px;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   border: none;
-  background: #0e6e64;
-  color: #fff;
-  font-size: 1.4rem;
-  box-shadow: 0 8px 24px -8px rgba(14, 110, 100, 0.6);
+  background: var(--sugam-primary);
+  box-shadow: 0 8px 28px -6px rgba(14, 110, 100, 0.55);
   cursor: pointer;
   z-index: 50;
+  transition: transform 0.15s ease;
+}
+
+.sugam-fab:hover {
+  transform: translateY(-2px);
 }
 
 .sugam-panel {
   position: fixed;
-  right: 1.1rem;
-  bottom: 4.6rem;
-  width: min(340px, calc(100vw - 2.2rem));
-  max-height: 70vh;
-  overflow-y: auto;
-  background: #fff;
-  border: 1px solid #d4dcd7;
-  border-radius: 12px;
-  box-shadow: 0 12px 32px -12px rgba(21, 32, 28, 0.35);
+  right: 1.2rem;
+  bottom: 5rem;
+  width: min(380px, calc(100vw - 2.2rem));
+  max-height: min(680px, 80vh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--sugam-surface);
+  border: 1px solid var(--sugam-border);
+  border-radius: var(--sugam-radius-xl);
+  box-shadow: var(--sugam-shadow);
   z-index: 50;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: var(--sugam-font-sans);
 }
 
 .sugam-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 1rem 0.6rem;
-  border-bottom: 1px solid #eef2ef;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--sugam-border);
+  flex-shrink: 0;
+}
+
+.sugam-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sugam-panel-title-main {
+  margin: 0;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: #15201c;
+  color: var(--sugam-ink);
+  line-height: 1.2;
+}
+
+.sugam-panel-title-sub {
+  margin: 0;
+  font-size: 0.74rem;
+  color: var(--sugam-muted);
+}
+
+.sugam-panel-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--sugam-muted);
+  cursor: pointer;
+}
+
+.sugam-panel-close:hover {
+  background: var(--sugam-teal-wash);
+  color: var(--sugam-primary);
 }
 
 .sugam-tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.3rem;
+  margin: 0.8rem 0.9rem 0;
+  padding: 0.35rem;
+  background: var(--sugam-bg);
+  border-radius: var(--sugam-radius-lg);
+  flex-shrink: 0;
 }
 
 .sugam-tabs button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
   border: none;
-  background: #eef2ef;
-  color: #45524b;
-  font-size: 0.72rem;
-  padding: 0.35em 0.6em;
-  border-radius: 999px;
+  background: transparent;
+  color: var(--sugam-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.5em 0.3em;
+  border-radius: var(--sugam-radius-md);
   cursor: pointer;
 }
 
 .sugam-tabs button.active {
-  background: #dcede9;
-  color: #0e6e64;
-  font-weight: 700;
+  background: var(--sugam-surface);
+  color: var(--sugam-primary);
+  box-shadow: 0 1px 3px rgba(27, 25, 23, 0.12);
 }
 
 .sugam-tabpanel {
-  padding: 1rem;
+  padding: 1.1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.75rem;
+  overflow-y: auto;
 }
 
 .sugam-field {
@@ -72,25 +129,33 @@
   flex-direction: column;
   gap: 0.3rem;
   font-size: 0.8rem;
-  color: #45524b;
+  color: var(--sugam-muted);
 }
 
 .sugam-field select,
 .sugam-field input {
   font: inherit;
-  padding: 0.4rem 0.5rem;
-  border: 1px solid #d4dcd7;
-  border-radius: 6px;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--sugam-border);
+  border-radius: var(--sugam-radius-sm);
+  background: var(--sugam-surface);
+  color: var(--sugam-ink);
 }
 
 .sugam-mic {
-  background: #0e6e64;
-  color: #fff;
+  background: var(--sugam-primary);
+  color: var(--sugam-primary-fg);
   border: none;
-  border-radius: 8px;
-  padding: 0.7rem;
+  border-radius: var(--sugam-radius-md);
+  padding: 0.75rem;
   font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.sugam-mic:hover:not(:disabled) {
+  background: var(--sugam-primary-hover);
 }
 
 .sugam-mic:disabled {
@@ -100,35 +165,35 @@
 
 .sugam-hint {
   font-size: 0.78rem;
-  color: #45524b;
+  color: var(--sugam-muted);
   margin: 0;
 }
 
 .sugam-transcript {
   font-size: 0.85rem;
-  color: #45524b;
+  color: var(--sugam-muted);
   margin: 0;
   font-style: italic;
 }
 
 .sugam-answer {
-  background: #dcede9;
-  color: #15201c;
-  border-radius: 8px;
-  padding: 0.6rem 0.75rem;
+  background: var(--sugam-teal-wash);
+  color: var(--sugam-ink);
+  border-radius: var(--sugam-radius-md);
+  padding: 0.65rem 0.8rem;
   font-size: 0.9rem;
   margin: 0;
 }
 
 .sugam-error {
-  color: #b3401e;
+  color: var(--sugam-danger);
   font-size: 0.82rem;
   margin: 0;
 }
 
 .sugam-raw {
   font-size: 0.8rem;
-  color: #45524b;
+  color: var(--sugam-muted);
 }
 
 .sugam-raw summary {
@@ -137,9 +202,9 @@
 }
 
 .sugam-simplified {
-  background: #eef2ef;
-  border-radius: 8px;
-  padding: 0.7rem 0.8rem;
+  background: var(--sugam-bg);
+  border-radius: var(--sugam-radius-md);
+  padding: 0.75rem 0.85rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -148,15 +213,15 @@
 .sugam-simplified p {
   margin: 0;
   font-size: 0.92rem;
-  color: #15201c;
+  color: var(--sugam-ink);
 }
 
 .sugam-simplified button {
   align-self: flex-start;
-  background: #0e6e64;
-  color: #fff;
+  background: var(--sugam-primary);
+  color: var(--sugam-primary-fg);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--sugam-radius-sm);
   padding: 0.4rem 0.8rem;
   font-size: 0.82rem;
   cursor: pointer;
@@ -189,7 +254,7 @@
   margin: 0.4rem 0 0;
   padding-left: 1.1rem;
   font-size: 0.82rem;
-  color: #45524b;
+  color: var(--sugam-muted);
 }
 
 .sugam-command-list li {
@@ -198,17 +263,67 @@
 
 .sugam-sign-video {
   width: 100%;
-  border-radius: 8px;
+  border-radius: var(--sugam-radius-md);
   background: #000;
   transform: scaleX(-1);
 }
 
 .sugam-confirm-actions button:last-child {
   background: none;
-  border: 1px solid #d4dcd7;
-  color: #45524b;
-  border-radius: 8px;
+  border: 1px solid var(--sugam-border);
+  color: var(--sugam-muted);
+  border-radius: var(--sugam-radius-sm);
   padding: 0.6rem;
   font-size: 0.85rem;
   cursor: pointer;
+}
+
+/* High contrast overrides — same literal alt-palette pattern used elsewhere in the app */
+html.pref-high-contrast .sugam-fab {
+  background: #ffe000;
+}
+html.pref-high-contrast .sugam-panel {
+  background: #000;
+  color: #fff;
+  border: 2px solid #ffe000;
+}
+html.pref-high-contrast .sugam-panel-header {
+  border-bottom-color: #444;
+}
+html.pref-high-contrast .sugam-panel-title-main {
+  color: #fff;
+}
+html.pref-high-contrast .sugam-panel-title-sub {
+  color: #ccc;
+}
+html.pref-high-contrast .sugam-tabs {
+  background: #111;
+}
+html.pref-high-contrast .sugam-tabs button {
+  color: #ccc;
+}
+html.pref-high-contrast .sugam-tabs button.active {
+  background: #ffe000;
+  color: #000;
+}
+html.pref-high-contrast .sugam-field,
+html.pref-high-contrast .sugam-hint,
+html.pref-high-contrast .sugam-transcript,
+html.pref-high-contrast .sugam-command-list {
+  color: #ccc;
+}
+html.pref-high-contrast .sugam-field select,
+html.pref-high-contrast .sugam-field input {
+  background: #111;
+  color: #fff;
+  border-color: #ffe000;
+}
+html.pref-high-contrast .sugam-answer,
+html.pref-high-contrast .sugam-simplified {
+  background: #111;
+  color: #fff;
+  border: 1px solid #ffe000;
+}
+html.pref-high-contrast .sugam-simplified p {
+  color: #fff;
 }
