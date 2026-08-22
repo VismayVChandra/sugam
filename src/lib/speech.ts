@@ -67,7 +67,18 @@ function speakWebSpeech(text: string, lang: string): Promise<void> {
     const utterance = new SpeechSynthesisUtterance(text)
     utterance.lang = lang
     utterance.onend = () => resolve()
-    utterance.onerror = () => reject(new Error('Speech synthesis failed.'))
+    utterance.onerror = (e: SpeechSynthesisErrorEvent) => {
+      // cancel() fires onerror on the utterance it interrupts. That's us
+      // deliberately stopping it to say something newer — not a failure,
+      // and treating it as one made speak() fall through to the Sarvam
+      // fallback, which then read the *cancelled* text aloud again in a
+      // different voice.
+      if (e.error === 'canceled' || e.error === 'interrupted') {
+        resolve()
+        return
+      }
+      reject(new Error(`Speech synthesis failed: ${e.error}`))
+    }
     window.speechSynthesis.cancel()
     window.speechSynthesis.speak(utterance)
   })
@@ -85,12 +96,20 @@ export async function listenOnce(lang: string): Promise<SpeechResult> {
   return listenOnceWebSpeech(lang)
 }
 
+// Bumped on every speak() and stopSpeaking(). Guards the fallback: if a
+// newer call has started by the time this one fails, staying silent is
+// correct — otherwise a superseded utterance gets read aloud on top of the
+// current one.
+let speakGeneration = 0
+
 /** Speaks text aloud in the given language, if a matching voice exists. */
 export async function speak(text: string, lang: string): Promise<void> {
-  // Stop whatever's currently playing first — otherwise two speak() calls
-  // close together (a double-click, or a rapid gesture re-trigger) stack
-  // audio on top of each other instead of the second replacing the first.
+  // Stop whatever's playing first — otherwise two speak() calls close
+  // together (a double-click, or a rapid gesture re-trigger) stack audio on
+  // top of each other instead of the second replacing the first.
   stopSpeaking()
+  const myGeneration = ++speakGeneration
+
   if ('speechSynthesis' in window) {
     try {
       await speakWebSpeech(text, lang)
@@ -99,6 +118,7 @@ export async function speak(text: string, lang: string): Promise<void> {
       console.warn('Web Speech synthesis failed, trying Sarvam if configured', e)
     }
   }
+  if (myGeneration !== speakGeneration) return
   if (isSarvamConfigured) {
     await speakWithSarvam(text, lang)
     return
@@ -107,6 +127,7 @@ export async function speak(text: string, lang: string): Promise<void> {
 }
 
 export function stopSpeaking() {
+  speakGeneration++
   stopSarvamAudio()
   if ('speechSynthesis' in window) window.speechSynthesis.cancel()
 }
