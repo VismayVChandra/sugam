@@ -4,6 +4,16 @@
   gap: 0.6rem;
 }
 
+.kyc-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.kyc-row label {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
 .kyc-form label {
   display: flex;
   flex-direction: column;

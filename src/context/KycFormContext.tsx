@@ -4,8 +4,17 @@ export interface KycValues {
   fullName: string
   phone: string
   address: string
+  idNumber: string
+  dateOfBirth: string
 }
 
+/**
+ * Fields the voice walkthrough asks for, in order. ID number is
+ * deliberately not in this list: it comes from photographing a document,
+ * not from being read aloud. Asking someone to speak their Aadhaar number
+ * — likely in a bank branch or queue, possibly with help from a stranger —
+ * is exactly the wrong way to collect it.
+ */
 export const KYC_FIELDS: { key: keyof KycValues; label: string; prompt: string }[] = [
   { key: 'fullName', label: 'Full name', prompt: 'What is your full name?' },
   { key: 'phone', label: 'Phone number', prompt: 'What is your 10 digit phone number?' },
@@ -22,7 +31,7 @@ interface KycFormContextValue {
 
 const KycFormContext = createContext<KycFormContextValue | null>(null)
 
-const EMPTY: KycValues = { fullName: 'Ramesh Kumar', phone: '', address: '' }
+const EMPTY: KycValues = { fullName: 'Ramesh Kumar', phone: '', address: '', idNumber: '', dateOfBirth: '' }
 
 export function KycFormProvider({ children }: { children: ReactNode }) {
   const [values, setValues] = useState<KycValues>(EMPTY)

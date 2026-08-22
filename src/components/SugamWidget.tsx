@@ -7,6 +7,7 @@ import { askAssistant, isAssistantConfigured, type ChatTurn } from '../lib/assis
 import { extractText } from '../lib/ocr'
 import { simplifyText, SimplifyConfigError } from '../lib/simplify'
 import { extractKycFields } from '../lib/extractFields'
+import { DOCUMENT_TYPE_LABELS } from '../lib/documentFields'
 import { normalizePhone } from '../lib/phone'
 import { useTargetSite, type VoiceIntent } from '../context/TargetSiteContext'
 import { useUiPrefs } from '../context/UiPrefsContext'
@@ -348,6 +349,23 @@ function FormAssistPanel() {
   const [error, setError] = useState('')
   const reviewResolver = useRef<((action: 'accept' | 'retry') => void) | null>(null)
 
+  // The confirmation read-back runs in the same async flow that just filled
+  // the fields, before React has re-rendered — so the closed-over `values`
+  // is still the pre-fill version and would read back "phone not set" for a
+  // form that is actually filled in. Someone relying on hearing that
+  // confirmation would be told their details were missing.
+  //
+  // A ref synced in useEffect doesn't help (effects run after render), so
+  // setFieldNow writes to the ref synchronously as well as to state. Always
+  // use it instead of setField in these flows.
+  const valuesRef = useRef(values)
+  valuesRef.current = values
+
+  function setFieldNow(key: keyof KycValues, value: string) {
+    valuesRef.current = { ...valuesRef.current, [key]: value }
+    setField(key, value)
+  }
+
   function say(text: string) {
     setLog((l) => [...l, { who: 'sugam', text }])
   }
@@ -379,7 +397,7 @@ function FormAssistPanel() {
         setStage('reviewing')
         const action = await waitForReview()
         if (action === 'accept') {
-          setField(field.key, heard)
+          setFieldNow(field.key, heard)
           setPending(null)
           accepted = true
           setStage('listening')
@@ -394,7 +412,16 @@ function FormAssistPanel() {
 
   function confirmAndOfferSubmit() {
     setStage('confirming')
-    const summary = `Please confirm: name ${values.fullName}, phone ${values.phone}, address ${values.address}.`
+    // Read from the ref, not the closed-over `values` — see valuesRef above.
+    const v = valuesRef.current
+    const parts = [
+      `name ${v.fullName || 'not set'}`,
+      `phone ${v.phone || 'not set'}`,
+      `address ${v.address || 'not set'}`,
+      v.dateOfBirth && `date of birth ${v.dateOfBirth}`,
+      v.idNumber && `ID number ${v.idNumber}`,
+    ].filter(Boolean)
+    const summary = `Please confirm: ${parts.join(', ')}.`
     say(summary)
     speak(summary, lang).catch(() => {})
   }
@@ -429,9 +456,26 @@ function FormAssistPanel() {
       say('Pulling out your details…')
       const extracted = await extractKycFields(text)
 
-      if (extracted.fullName) setField('fullName', extracted.fullName)
-      if (extracted.phone) setField('phone', extracted.phone)
-      if (extracted.address) setField('address', extracted.address)
+      if (extracted.documentType !== 'unknown') {
+        const label = DOCUMENT_TYPE_LABELS[extracted.documentType]
+        const article = /^[AEIOU]/i.test(label) ? 'an' : 'a'
+        say(`Looks like ${article} ${label}.`)
+      }
+
+      if (extracted.fullName) setFieldNow('fullName', extracted.fullName)
+      if (extracted.phone) setFieldNow('phone', extracted.phone)
+      if (extracted.address) setFieldNow('address', extracted.address)
+      if (extracted.idNumber) setFieldNow('idNumber', extracted.idNumber)
+      if (extracted.dateOfBirth) setFieldNow('dateOfBirth', extracted.dateOfBirth)
+
+      const filled = [
+        extracted.fullName && 'name',
+        extracted.dateOfBirth && 'date of birth',
+        extracted.idNumber && 'ID number',
+        extracted.phone && 'phone number',
+        extracted.address && 'address',
+      ].filter(Boolean)
+      if (filled.length > 0) say(`Filled in your ${filled.join(', ')}.`)
 
       const missing = KYC_FIELDS.filter((f) => !extracted[f.key])
       if (missing.length > 0 && isSpeechSupported()) {
@@ -485,7 +529,7 @@ function FormAssistPanel() {
             🎙 Fill by voice
           </button>
           <label className="sugam-field">
-            or photograph your ID
+            or snap your Aadhaar, ration card, PAN or mark sheet
             <input type="file" accept="image/*" capture="environment" onChange={handlePhoto} />
           </label>
           <p className="sugam-hint">

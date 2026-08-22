@@ -56,12 +56,22 @@ Note the typed input too: **"Voice-first isn't voice-only — someone who's Deaf
 
 > "Same pipeline, but now it comes back in the language the person actually reads."
 
-## 4. CUT FIRST if short on time — Guided form fill (25 seconds)
+## 4. IF TIME — Snap-to-form auto-fill (30 seconds)
 
-> "And the pieces chain together — for the moment that excludes people most: filling out a form."
+> "And here's the moment that actually excludes people most: filling out a form."
 
-- Fill form tab → Fill by voice, do **one field only**, show the "sounds right? / try again" check
-- "It confirms every field before anything submits — no surprises."
+- Fill form tab → **snap a photo of an Aadhaar card** (have one ready — a printed dummy, or a photo already on the laptop)
+- Let it run: it names the document, then fills name, date of birth, ID number and address at once
+
+> "It recognised the document type, and filled four fields from one photo."
+
+**Then point at the ID number field — this is the bit worth pausing on:**
+
+> "Notice the Aadhaar number is masked to the last four digits. That's on purpose. Real KYC forms do that, and it matters more here than anywhere: the person using this may need someone else to read their screen. We also never send the ID number off the device at all — it's pulled out locally with pattern matching, and stripped from the text before anything goes to an API. The AI only ever sees the name and address."
+
+That one answer covers accessibility, privacy and domain awareness in about fifteen seconds.
+
+If short on time, do **Fill by voice** for one field instead and show the "sounds right? / try again" check.
 
 ## 5. MUST — The second/third site (30 seconds, your strongest beat)
 

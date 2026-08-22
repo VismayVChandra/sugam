@@ -49,6 +49,26 @@ export default function ContactDetailsForm({ submitLabel = 'Submit' }: { submitL
           onChange={(e) => setField('address', e.target.value)}
         />
       </label>
+      <div className="kyc-row">
+        <label>
+          Date of birth
+          <input
+            name="dateOfBirth"
+            placeholder="DD/MM/YYYY"
+            value={values.dateOfBirth}
+            onChange={(e) => setField('dateOfBirth', e.target.value)}
+          />
+        </label>
+        <label>
+          ID number
+          <input
+            name="idNumber"
+            placeholder="From your ID document"
+            value={values.idNumber}
+            onChange={(e) => setField('idNumber', e.target.value)}
+          />
+        </label>
+      </div>
       <button type="submit">{submitLabel}</button>
     </form>
   )
