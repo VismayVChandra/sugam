@@ -53,6 +53,66 @@
   border-radius: 4px;
 }
 
+.login-guide {
+  margin-bottom: 1.2rem;
+}
+
+.login-guide-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--sugam-primary);
+  color: var(--sugam-primary-fg);
+  border: none;
+  border-radius: var(--sugam-radius-md);
+  padding: 0.85rem 1rem;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.login-guide-btn:hover:not(:disabled) {
+  background: var(--sugam-primary-hover);
+}
+
+.login-guide-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.login-guide-btn-secondary {
+  background: none;
+  border: 1.5px solid var(--sugam-border);
+  color: var(--sugam-muted);
+  border-radius: var(--sugam-radius-md);
+  padding: 0.6rem 0.9rem;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-guide-confirm {
+  background: var(--sugam-teal-wash);
+  border-radius: var(--sugam-radius-md);
+  padding: 0.8rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.login-guide-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
 .login-helpers {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -195,4 +255,20 @@ html.pref-high-contrast .login-form input {
 html.pref-high-contrast .login-action {
   background: #ffe000;
   color: #000;
+}
+html.pref-high-contrast .login-guide-btn {
+  background: #ffe000;
+  color: #000;
+}
+html.pref-high-contrast .login-guide-btn-secondary {
+  background: #111;
+  color: #fff;
+  border-color: #ffe000;
+}
+html.pref-high-contrast .login-guide-confirm {
+  background: #111;
+  border: 1px solid #ffe000;
+}
+html.pref-high-contrast .login-guide-confirm p {
+  color: #fff;
 }

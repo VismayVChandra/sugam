@@ -1,0 +1,68 @@
+.caregiver-banner {
+  background: var(--sugam-teal-wash);
+  border-bottom: 1px solid var(--sugam-border);
+  padding: 0.5rem 1rem;
+  font-size: 0.82rem;
+}
+
+.caregiver-banner-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--sugam-primary);
+  font-weight: 600;
+}
+
+.caregiver-log-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--sugam-primary);
+  color: var(--sugam-primary);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.caregiver-log {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.caregiver-log li {
+  color: var(--sugam-ink);
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+.caregiver-log-time {
+  color: var(--sugam-muted);
+  font-variant-numeric: tabular-nums;
+  margin-right: 0.35rem;
+}
+
+.caregiver-log-empty {
+  color: var(--sugam-muted);
+}
+
+html.pref-high-contrast .caregiver-banner {
+  background: #111;
+  border-color: #ffe000;
+}
+
+html.pref-high-contrast .caregiver-banner-row,
+html.pref-high-contrast .caregiver-log li,
+html.pref-high-contrast .caregiver-log-toggle {
+  color: #fff;
+  border-color: #ffe000;
+}

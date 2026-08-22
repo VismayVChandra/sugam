@@ -1,5 +1,6 @@
 import { applicant, scholarship, documentsRequired } from '../data/mockGov'
 import ContactDetailsForm from '../components/ContactDetailsForm'
+import { useT } from '../lib/i18n'
 import './GovPortal.css'
 
 // A second, unrelated "existing app" — different domain, different data,
@@ -7,6 +8,7 @@ import './GovPortal.css'
 // DemoSiteLayout wrapping, same Sugam widget, no widget code changed.
 
 export default function GovPortal() {
+  const t = useT()
   return (
     <div className="gov-portal">
       <header className="gov-header">
@@ -19,7 +21,7 @@ export default function GovPortal() {
         <h1 className="sr-only">National Scholarship Portal — application overview</h1>
 
         <section id="app-status" className="gcard">
-          <h2 className="gcard-label">Application {applicant.applicationId}</h2>
+          <h2 className="gcard-label">{t('Application')} {applicant.applicationId}</h2>
           <p className="gcard-value">{applicant.name}</p>
           <span className="gstatus-pill">{scholarship.status}</span>
         </section>
@@ -27,11 +29,11 @@ export default function GovPortal() {
         <section id="scholarship-amount" className="gcard">
           <h2 className="gcard-label">{scholarship.name}</h2>
           <p className="gcard-value">₹{scholarship.amount.toLocaleString('en-IN')}</p>
-          <p className="gcard-sub">Expected by {scholarship.expectedDate}</p>
+          <p className="gcard-sub">{t('Expected by')} {scholarship.expectedDate}</p>
         </section>
 
         <section id="documents" className="gcard">
-          <h2 className="gcard-label">Documents required</h2>
+          <h2 className="gcard-label">{t('Documents required')}</h2>
           <ul className="gdoc-list">
             {documentsRequired.map((d) => (
               <li key={d}>{d}</li>
@@ -40,8 +42,8 @@ export default function GovPortal() {
         </section>
 
         <section id="kyc-form" className="gcard">
-          <h2 className="gcard-label">Update application details</h2>
-          <ContactDetailsForm submitLabel="Update application" />
+          <h2 className="gcard-label">{t('Update application details')}</h2>
+          <ContactDetailsForm submitLabel={t('Update application')} />
         </section>
       </main>
     </div>

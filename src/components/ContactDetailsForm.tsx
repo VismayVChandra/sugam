@@ -1,18 +1,20 @@
 import { useKycForm } from '../context/KycFormContext'
+import { useT } from '../lib/i18n'
 import './ContactDetailsForm.css'
 
 // Reused as-is on both demo sites (bank KYC update, government application
 // details) — the same fields, the same voice-fill flow in SugamWidget,
 // no per-site code. That reuse is itself part of the "one layer" proof.
 
-export default function ContactDetailsForm({ submitLabel = 'Submit' }: { submitLabel?: string }) {
+export default function ContactDetailsForm({ submitLabel }: { submitLabel?: string }) {
   const { values, setField, submitted, submit, reset } = useKycForm()
+  const t = useT()
 
   if (submitted) {
     return (
       <div className="kyc-success">
-        <p>✔ Details submitted.</p>
-        <button onClick={reset}>Edit again</button>
+        <p>{t('✔ Details submitted.')}</p>
+        <button onClick={reset}>{t('Edit again')}</button>
       </div>
     )
   }
@@ -26,11 +28,11 @@ export default function ContactDetailsForm({ submitLabel = 'Submit' }: { submitL
       className="kyc-form"
     >
       <label>
-        Full name
+        {t('Full name')}
         <input name="fullName" value={values.fullName} onChange={(e) => setField('fullName', e.target.value)} />
       </label>
       <label>
-        Phone number
+        {t('Phone number')}
         <input
           name="phone"
           type="tel"
@@ -40,7 +42,7 @@ export default function ContactDetailsForm({ submitLabel = 'Submit' }: { submitL
         />
       </label>
       <label>
-        Address
+        {t('Address')}
         <textarea
           name="address"
           rows={2}
@@ -51,7 +53,7 @@ export default function ContactDetailsForm({ submitLabel = 'Submit' }: { submitL
       </label>
       <div className="kyc-row">
         <label>
-          Date of birth
+          {t('Date of birth')}
           <input
             name="dateOfBirth"
             placeholder="DD/MM/YYYY"
@@ -60,7 +62,7 @@ export default function ContactDetailsForm({ submitLabel = 'Submit' }: { submitL
           />
         </label>
         <label>
-          ID number
+          {t('ID number')}
           <input
             name="idNumber"
             placeholder="From your ID document"
@@ -69,7 +71,7 @@ export default function ContactDetailsForm({ submitLabel = 'Submit' }: { submitL
           />
         </label>
       </div>
-      <button type="submit">{submitLabel}</button>
+      <button type="submit">{submitLabel ?? t('Submit')}</button>
     </form>
   )
 }

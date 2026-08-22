@@ -40,6 +40,16 @@ export function setGlobalSpeechRate(rate: number) {
   globalSpeechRate = rate
 }
 
+// Tracked so a hands-free listening loop can be cancelled instantly (e.g.
+// the user taps "stop") instead of waiting out the browser's own multi
+// -second silence timeout before the loop notices and exits.
+let activeRecognition: SpeechRecognition | null = null
+
+export function stopListening() {
+  activeRecognition?.abort()
+  activeRecognition = null
+}
+
 function listenOnceWebSpeech(lang: string): Promise<SpeechResult> {
   const Ctor = getRecognitionCtor()
   if (!Ctor) {
@@ -51,6 +61,7 @@ function listenOnceWebSpeech(lang: string): Promise<SpeechResult> {
     recognition.lang = lang
     recognition.interimResults = false
     recognition.maxAlternatives = 1
+    activeRecognition = recognition
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       const transcript = event.results[0]?.[0]?.transcript ?? ''
@@ -61,6 +72,7 @@ function listenOnceWebSpeech(lang: string): Promise<SpeechResult> {
     }
     recognition.onend = () => {
       // If no result fired before end, resolve empty rather than hang.
+      if (activeRecognition === recognition) activeRecognition = null
     }
 
     recognition.start()

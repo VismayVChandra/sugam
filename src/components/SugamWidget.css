@@ -163,6 +163,32 @@
   cursor: default;
 }
 
+.sugam-handsfree {
+  background: var(--sugam-surface);
+  color: var(--sugam-primary);
+  border: 1.5px solid var(--sugam-primary);
+}
+
+.sugam-handsfree:hover:not(:disabled) {
+  background: var(--sugam-teal-wash);
+}
+
+.sugam-handsfree.active {
+  background: var(--sugam-danger);
+  color: #fff;
+  border-color: var(--sugam-danger);
+  animation: sugam-handsfree-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes sugam-handsfree-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--sugam-danger) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
 .sugam-hint {
   font-size: 0.78rem;
   color: var(--sugam-muted);
@@ -225,6 +251,81 @@
   padding: 0.4rem 0.8rem;
   font-size: 0.82rem;
   cursor: pointer;
+}
+
+.sugam-word {
+  display: inline;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 3px;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+.sugam-word:hover,
+.sugam-word:focus-visible {
+  background: var(--sugam-teal-wash);
+  color: var(--sugam-primary);
+}
+
+.sugam-explain-box {
+  margin-top: 0.4rem;
+  padding: 0.6rem 0.7rem;
+  background: var(--sugam-teal-wash);
+  border-radius: var(--sugam-radius-sm);
+  font-size: 0.85rem;
+}
+
+.sugam-explain-word {
+  font-weight: 700;
+  text-transform: capitalize;
+  color: var(--sugam-primary);
+  margin: 0 0 0.2rem;
+}
+
+.sugam-tap-hint {
+  margin: 0;
+}
+
+.sugam-doc-list {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.sugam-doc-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sugam-doc-open {
+  flex: 1;
+  text-align: left;
+  background: none;
+  border: 1px solid var(--sugam-border);
+  border-radius: var(--sugam-radius-sm);
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  color: var(--sugam-ink);
+  cursor: pointer;
+}
+
+.sugam-doc-delete {
+  background: none;
+  border: none;
+  color: var(--sugam-danger);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.4rem;
 }
 
 .sugam-review {
@@ -418,4 +519,21 @@ html.pref-high-contrast .sugam-simplified {
 }
 html.pref-high-contrast .sugam-simplified p {
   color: #fff;
+}
+html.pref-high-contrast .sugam-explain-box {
+  background: #111;
+  border: 1px solid #ffe000;
+}
+html.pref-high-contrast .sugam-explain-word {
+  color: #ffe000;
+}
+html.pref-high-contrast .sugam-word:hover,
+html.pref-high-contrast .sugam-word:focus-visible {
+  background: #111;
+  color: #ffe000;
+}
+html.pref-high-contrast .sugam-doc-open {
+  background: #111;
+  color: #fff;
+  border-color: #ffe000;
 }

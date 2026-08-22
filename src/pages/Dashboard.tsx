@@ -1,5 +1,6 @@
 import { account, subsidy, transactions } from '../data/mockBank'
 import ContactDetailsForm from '../components/ContactDetailsForm'
+import { useT } from '../lib/i18n'
 import './Dashboard.css'
 
 // The "existing app" from the architecture diagram — a stand-in bank portal
@@ -7,6 +8,7 @@ import './Dashboard.css'
 // targets the voice pipeline highlights.
 
 export default function Dashboard() {
+  const t = useT()
   return (
     <div className="dashboard">
       <header className="bank-header">
@@ -18,7 +20,7 @@ export default function Dashboard() {
         <h1 className="sr-only">सा॑थी Bank account overview</h1>
 
         <section id="balance" className="card">
-          <h2 className="card-label">Account {account.number}</h2>
+          <h2 className="card-label">{t('Account')} {account.number}</h2>
           <p className="card-balance">₹{account.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
         </section>
 
@@ -30,7 +32,7 @@ export default function Dashboard() {
         </section>
 
         <section id="transactions" className="card" aria-label="Recent transactions">
-          <h2 className="card-label">Recent transactions</h2>
+          <h2 className="card-label">{t('Recent transactions')}</h2>
           <table>
             <tbody>
               {transactions.map((t) => (
@@ -47,7 +49,7 @@ export default function Dashboard() {
         </section>
 
         <section id="kyc-form" className="card">
-          <h2 className="card-label">Update KYC details</h2>
+          <h2 className="card-label">{t('Update KYC details')}</h2>
           <ContactDetailsForm />
         </section>
       </main>

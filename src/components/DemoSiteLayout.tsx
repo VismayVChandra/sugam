@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { TargetSiteProvider, type TargetSite } from '../context/TargetSiteContext'
 import { KycFormProvider } from '../context/KycFormContext'
 import AccessibilityBar from './AccessibilityBar'
+import CaregiverBanner from './CaregiverBanner'
 import SugamWidget from './SugamWidget'
 
 // Every demo site is wrapped identically: register its intents/summary,
@@ -13,6 +14,7 @@ export default function DemoSiteLayout({ site, children }: { site: TargetSite; c
     <TargetSiteProvider site={site}>
       <KycFormProvider>
         <AccessibilityBar />
+        <CaregiverBanner />
         {children}
         <SugamWidget />
       </KycFormProvider>

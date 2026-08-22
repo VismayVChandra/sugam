@@ -1,5 +1,6 @@
 import { patient, appointment, prescription } from '../data/mockHealth'
 import ContactDetailsForm from '../components/ContactDetailsForm'
+import { useT } from '../lib/i18n'
 import './HealthPortal.css'
 
 // A third demo site, again reusing DemoSiteLayout + ContactDetailsForm +
@@ -7,6 +8,7 @@ import './HealthPortal.css'
 // domain, to make the reuse claim harder to dismiss as a coincidence.
 
 export default function HealthPortal() {
+  const t = useT()
   return (
     <div className="health-portal">
       <header className="health-header">
@@ -18,7 +20,7 @@ export default function HealthPortal() {
         <h1 className="sr-only">Community Health Centre — patient overview</h1>
 
         <section id="appointment" className="hcard">
-          <h2 className="hcard-label">Next appointment</h2>
+          <h2 className="hcard-label">{t('Next appointment')}</h2>
           <p className="hcard-value">{appointment.doctor}</p>
           <p className="hcard-sub">
             {appointment.department} · {appointment.date} at {appointment.time}
@@ -26,21 +28,21 @@ export default function HealthPortal() {
         </section>
 
         <section id="prescription" className="hcard">
-          <h2 className="hcard-label">Current prescription</h2>
+          <h2 className="hcard-label">{t('Current prescription')}</h2>
           <p className="hcard-value">{prescription.medicine}</p>
           <p className="hcard-sub">{prescription.instructions}</p>
-          <span className="hstatus-pill">Refill due {prescription.refillDue}</span>
+          <span className="hstatus-pill">{t('Refill due')} {prescription.refillDue}</span>
         </section>
 
         <section id="doctor" className="hcard">
-          <h2 className="hcard-label">Assigned doctor</h2>
+          <h2 className="hcard-label">{t('Assigned doctor')}</h2>
           <p className="hcard-value">{appointment.doctor}</p>
-          <p className="hcard-sub">{appointment.department} · Patient ID {patient.patientId}</p>
+          <p className="hcard-sub">{appointment.department} · {t('Patient ID')} {patient.patientId}</p>
         </section>
 
         <section id="kyc-form" className="hcard">
-          <h2 className="hcard-label">Update patient details</h2>
-          <ContactDetailsForm submitLabel="Update details" />
+          <h2 className="hcard-label">{t('Update patient details')}</h2>
+          <ContactDetailsForm submitLabel={t('Update details')} />
         </section>
       </main>
     </div>

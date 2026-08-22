@@ -1,0 +1,140 @@
+.emergency-fab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 34px;
+  background: var(--sugam-danger);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.emergency-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 1rem;
+}
+
+.emergency-card {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  background: var(--sugam-surface);
+  border-radius: var(--sugam-radius-lg);
+  box-shadow: var(--sugam-shadow);
+  padding: 1.75rem 1.5rem 1.5rem;
+  text-align: center;
+}
+
+.emergency-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--sugam-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.emergency-icon {
+  color: var(--sugam-danger);
+  margin-bottom: 0.5rem;
+}
+
+.emergency-card h2 {
+  font-family: var(--sugam-font-serif);
+  font-size: 1.3rem;
+  margin: 0 0 0.35rem;
+}
+
+.emergency-sub {
+  color: var(--sugam-muted);
+  font-size: 0.9rem;
+  margin: 0 0 1.1rem;
+}
+
+.emergency-call {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 46px;
+  background: var(--sugam-danger);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.emergency-edit {
+  display: block;
+  margin: 0.85rem auto 0;
+  background: none;
+  border: none;
+  color: var(--sugam-muted);
+  font-size: 0.8rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.emergency-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  text-align: left;
+}
+
+.emergency-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--sugam-ink);
+}
+
+.emergency-form input {
+  height: 42px;
+  border: 1px solid var(--sugam-border);
+  border-radius: var(--sugam-radius-sm);
+  padding: 0 0.75rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+html.pref-high-contrast .emergency-card {
+  background: #000;
+  border: 2px solid #ffe000;
+}
+
+html.pref-high-contrast .emergency-card h2,
+html.pref-high-contrast .emergency-form label {
+  color: #fff;
+}
+
+html.pref-high-contrast .emergency-form input {
+  background: #111;
+  color: #fff;
+  border-color: #ffe000;
+}
+
+html.pref-high-contrast .emergency-fab,
+html.pref-high-contrast .emergency-call {
+  background: #111;
+  color: #fff;
+  border: 2px solid #ffe000;
+}
