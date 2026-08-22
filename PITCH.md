@@ -28,16 +28,23 @@ Don't open with a slide or an abstract framing line. Open by doing the thing:
 
 If voice-fill feels risky in the room's acoustics, just type the email and say "we'll show voice-fill live in a second" — don't lose the moment to a misheard address on stage. Either way, **always type the password** — that's not a fallback, that's the design (see the security Q&A below).
 
-## 2. MUST — Live demo: voice navigation (40 seconds)
+## 2. MUST — Live demo: the assistant (45 seconds)
 
 > "This is a plain bank portal — nothing special, that's the point."
 
 - From the home screen, enter **Bank demo**
-- Open Sugam, Voice tab, speak: **"What's my balance?"**
-- Let it highlight the card and answer out loud
-- If confident, one more in a different language: **"Check my LPG subsidy status"**
+- Open Sugam, Voice tab. **Deliberately do not use the 'right' words** — ask by voice or type: **"how much money do I have left?"**
+- Then a follow-up that only makes sense in context: **"and what about the gas one?"**
 
-> "Same layer, any Indian language, no changes to the bank's site."
+> "Notice I never said 'balance' or 'subsidy'. It's not matching keywords — it understands, and it remembers what we were just talking about. That matters, because someone with low literacy doesn't know your magic words."
+
+If asked — or to pre-empt the obvious question — show the guardrail:
+
+- Ask: **"what's my IFSC code?"** → it says it can't see that on this page rather than inventing one.
+
+> "It can only answer from what's actually on the page. It will never make up a number for someone managing real money."
+
+Note the typed input too: **"Voice-first isn't voice-only — someone who's Deaf or can't speak types the same question and gets the same help."**
 
 ## 3. IF TIME — Read & simplify, now with translation (35 seconds)
 
@@ -90,6 +97,9 @@ A fourth widget tab: an honest, small MediaPipe hand-tracking proof-of-concept (
 
 **"What happens if there's no internet?"**
 > "OCR (Tesseract.js) runs fully offline. Voice and the Sign tab's model both need a connection today — swapping in AI4Bharat's open-source models is the documented next step for true offline voice."
+
+**"Does the AI hallucinate? Can it make up someone's bank balance?"**
+> "Structurally, no. It's given only the facts on the current page and told to say 'I can't see that' for anything else — you can watch it do that live with the IFSC question. It also can't invent an action; we only accept an action id that actually exists on that page. And it's told to refuse financial and medical advice — it explains what's on the page, it doesn't tell you what to do with your money or medication."
 
 **"How accurate is the voice recognition really?"**
 > "Browser speech-to-text misses things sometimes, especially names and phone numbers — which is why we built a per-field confirm step instead of trusting it blindly. You can always correct any field by hand, too."

@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { X, Mic, FileText, ClipboardList, Hand } from 'lucide-react'
+import { X, Mic, FileText, ClipboardList, Hand, Send } from 'lucide-react'
 import { isSpeechSupported, listenOnce, speak, SUPPORTED_LANGUAGES, APPROX_RECORD_MS } from '../lib/speech'
 import { matchIntent } from '../lib/intentMatch'
 import { buildUniversalIntents } from '../lib/universalIntents'
+import { askAssistant, isAssistantConfigured, type ChatTurn } from '../lib/assistant'
 import { extractText } from '../lib/ocr'
 import { simplifyText, SimplifyConfigError } from '../lib/simplify'
 import { extractKycFields } from '../lib/extractFields'
 import { normalizePhone } from '../lib/phone'
-import { useTargetSite } from '../context/TargetSiteContext'
+import { useTargetSite, type VoiceIntent } from '../context/TargetSiteContext'
 import { useUiPrefs } from '../context/UiPrefsContext'
 import { useWidgetOpen } from '../context/WidgetOpenContext'
 import { KYC_FIELDS, useKycForm, type KycValues } from '../context/KycFormContext'
@@ -96,52 +97,112 @@ function VoicePanel() {
   const uiPrefs = useUiPrefs()
   const [lang, setLang] = useState<string>(SUPPORTED_LANGUAGES[0].code)
   const [status, setStatus] = useState<VoiceStatus>('idle')
-  const [transcript, setTranscript] = useState('')
-  const [answer, setAnswer] = useState('')
+  const [turns, setTurns] = useState<ChatTurn[]>([])
+  const [typed, setTyped] = useState('')
   const [error, setError] = useState('')
+  const logRef = useRef<HTMLDivElement>(null)
+
+  const langLabel = SUPPORTED_LANGUAGES.find((l) => l.code === lang)?.label ?? 'English'
+
+  // Keep the newest message in view as the conversation grows.
+  useEffect(() => {
+    logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: 'smooth' })
+  }, [turns, status])
+
+  // Start a fresh conversation when the user moves to a different portal.
+  // History is fed back to the model as context, so carrying bank answers
+  // onto the health page would let it repeat facts the current page can't
+  // actually support — the exact grounding leak the system prompt forbids.
+  useEffect(() => {
+    setTurns([])
+    setError('')
+  }, [site.siteName])
+
+  /** Runs a matched page action: scroll to it, highlight it, fire any side effect. */
+  function performAction(actionId: string, allIntents: VoiceIntent[]) {
+    const intent = allIntents.find((i) => i.id === actionId)
+    if (!intent) return
+    highlight(intent.id)
+    intent.run?.()
+  }
+
+  async function handleQuestion(question: string) {
+    const q = question.trim()
+    if (!q) return
+
+    setError('')
+    setTurns((t) => [...t, { role: 'user', content: q }])
+    setStatus('thinking')
+
+    const allIntents = [...site.intents, ...buildUniversalIntents(uiPrefs)]
+
+    try {
+      let reply: string
+      if (isAssistantConfigured()) {
+        const result = await askAssistant({
+          question: q,
+          siteName: site.siteName,
+          facts: site.pageSummary(),
+          intents: allIntents,
+          history: turns,
+          langLabel,
+        })
+        reply = result.reply
+        if (result.actionId) performAction(result.actionId, allIntents)
+      } else {
+        // No LLM key configured — fall back to the original keyword matcher
+        // so the demo still works, just less flexibly.
+        const intent = matchIntent(q, allIntents)
+        if (intent) {
+          reply = intent.answer()
+          performAction(intent.id, allIntents)
+        } else {
+          reply = "Sorry, I didn't catch a command I recognize. Try asking about what's on this page."
+        }
+      }
+
+      setTurns((t) => [...t, { role: 'assistant', content: reply }])
+      setStatus('idle')
+      await speak(reply, lang)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Something went wrong.')
+      setStatus('idle')
+    }
+  }
 
   async function handleMic() {
     setError('')
-    setAnswer('')
-    setTranscript('')
     if (!isSpeechSupported()) {
       setError('Speech recognition is not supported in this browser. Try Chrome.')
       return
     }
     setStatus('recording')
-    // Approximate progress cue only — the real STT call has its own timing
-    // regardless of which engine actually ends up running underneath.
     const toThinking = APPROX_RECORD_MS > 0 ? window.setTimeout(() => setStatus('thinking'), APPROX_RECORD_MS) : null
     try {
-      const { transcript: t } = await listenOnce(lang)
-      setStatus('thinking')
-      setTranscript(t)
-      const allIntents = [...site.intents, ...buildUniversalIntents(uiPrefs)]
-      const intent = matchIntent(t, allIntents)
-      if (intent) {
-        const response = intent.answer()
-        setAnswer(response)
-        highlight(intent.id)
-        intent.run?.()
-        await speak(response, lang)
-      } else {
-        const response = "Sorry, I didn't catch a command I recognize. Try asking about your balance, subsidy, or transactions."
-        setAnswer(response)
-        await speak(response, lang)
-      }
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Something went wrong.')
-    } finally {
+      const { transcript } = await listenOnce(lang)
       if (toThinking) window.clearTimeout(toThinking)
+      await handleQuestion(transcript)
+    } catch (e) {
+      if (toThinking) window.clearTimeout(toThinking)
+      setError(e instanceof Error ? e.message : 'Something went wrong.')
       setStatus('idle')
     }
   }
+
+  function handleTypedSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const q = typed
+    setTyped('')
+    handleQuestion(q)
+  }
+
+  const busy = status !== 'idle'
 
   return (
     <div className="sugam-tabpanel">
       <label className="sugam-field">
         Language
-        <select value={lang} onChange={(e) => setLang(e.target.value)}>
+        <select value={lang} onChange={(e) => setLang(e.target.value)} disabled={busy}>
           {SUPPORTED_LANGUAGES.map((l) => (
             <option key={l.code} value={l.code}>
               {l.label}
@@ -150,12 +211,40 @@ function VoicePanel() {
         </select>
       </label>
 
-      <button className="sugam-mic" onClick={handleMic} disabled={status !== 'idle'}>
-        {status === 'recording' ? '🔴 Recording — speak now…' : status === 'thinking' ? 'Thinking…' : '🎙 Speak a command'}
+      <div className="sugam-chat-log" ref={logRef} role="log" aria-live="polite" aria-label="Conversation">
+        {turns.length === 0 && (
+          <p className="sugam-hint">
+            Ask me anything about this page — in your own words. Try “how much money do I have?” or “when is my
+            appointment?”
+          </p>
+        )}
+        {turns.map((t, i) => (
+          <p key={i} className={t.role === 'user' ? 'sugam-chat-user' : 'sugam-chat-bot'}>
+            {t.content}
+          </p>
+        ))}
+        {status === 'thinking' && <p className="sugam-chat-bot sugam-chat-pending">…</p>}
+      </div>
+
+      <button className="sugam-mic" onClick={handleMic} disabled={busy}>
+        {status === 'recording' ? '🔴 Listening — speak now…' : status === 'thinking' ? 'Thinking…' : '🎙 Ask by voice'}
       </button>
 
+      <form className="sugam-chat-form" onSubmit={handleTypedSubmit}>
+        <input
+          value={typed}
+          onChange={(e) => setTyped(e.target.value)}
+          placeholder="…or type your question"
+          aria-label="Type your question"
+          disabled={busy}
+        />
+        <button type="submit" disabled={busy || !typed.trim()} aria-label="Send question">
+          <Send size={16} aria-hidden="true" />
+        </button>
+      </form>
+
       <details className="sugam-raw">
-        <summary>What can I say?</summary>
+        <summary>What can I ask?</summary>
         <ul className="sugam-command-list">
           {site.intents.map((i) => (
             <li key={i.id}>{i.label ?? i.keywords[0]}</li>
@@ -166,8 +255,6 @@ function VoicePanel() {
         </ul>
       </details>
 
-      {transcript && <p className="sugam-transcript">You said: “{transcript}”</p>}
-      {answer && <p className="sugam-answer">{answer}</p>}
       {error && <p className="sugam-error">{error}</p>}
     </div>
   )

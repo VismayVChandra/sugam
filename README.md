@@ -23,7 +23,7 @@ Full concept, API stack, architecture and build plan: see the [pitch artifact](h
 
 **`src/components/SugamWidget.tsx`** — the on-demand layer: a floating widget with four tabs.
 
-- **Voice** (Pillar 1): speak a command — per-site intents (balance/subsidy/transactions, application status/amount/documents, appointment/prescription/doctor) plus universal actions available on every site for free (`src/lib/universalIntents.ts`): "scroll down/up," "submit," "large text," "high contrast." A "What can I say?" list shows every available command per site. Web Speech API baseline — see `speech.ts` for the Bhashini/Sarvam swap point.
+- **Voice** (Pillar 1): a grounded AI assistant, not a command list. Ask in your own words, by voice *or* by typing (`src/lib/assistant.ts`, Groq-backed) — "how much money do I have", "kitna paisa hai", "and what about the gas one?" all work, including follow-ups that depend on the previous turn. It can also perform page actions ("make it easier to read" → toggles large text). Two hard guardrails in the prompt: it may only answer from the current page's facts (never inventing an account number or date), and it refuses financial/medical advice. Falls back to the original keyword matcher (`src/lib/intentMatch.ts`) if no Groq key is set. Conversation resets when you switch portals, so one site's facts can't leak into another's answers.
 - **Read & simplify** (Pillar 2): photograph a document, OCR via Tesseract.js, simplified via Groq **in the language you pick** — English or any of the 6 listed Indian languages, not English-only.
 - **Fill form** (Pillar 5): voice-guided field-by-field fill with a "sounds right? / try again" check per field, or photo-ID autofill.
 - **Sign** (Pillar 3, honest proof-of-concept): MediaPipe hand-tracking, two gestures only — open palm reads the page aloud, fist stops it. See `src/lib/handGesture.ts` for why this is landmark geometry, not a trained classifier.
@@ -64,7 +64,7 @@ Not yet tested: real screen reader (NVDA/VoiceOver) pass, real throttled-network
 ## Known gaps (by design, for the demo)
 
 - Authentication is real (Supabase), but there's no email/password strength policy or rate-limiting configured beyond Supabase's defaults — fine for a hackathon demo, worth hardening (and adding MFA) before any real deployment.
-- Voice intent matching is keyword-based, not a real NLU — fine for a handful of intents per site, note it honestly if asked.
+- The assistant is grounded in a short page summary, not a live read of the DOM — it knows the headline facts each site registers, not every element on screen. Ask it something the summary doesn't cover and it will correctly say it can't see that.
 - No backend beyond Supabase Auth — Groq, OCR, and everything else still runs client-side. Do not ship the Groq key in this form past the hackathon.
 - Only English/Hindi keywords are populated per intent; other listed languages transcribe but won't always match an intent yet.
 - The Sign tab is explicitly a proof-of-concept: two gestures via landmark geometry, not real ISL. Say so if asked — see `PITCH.md`.

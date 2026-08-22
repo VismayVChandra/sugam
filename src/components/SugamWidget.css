@@ -250,6 +250,98 @@
   gap: 0.5rem;
 }
 
+.sugam-chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 0.2rem;
+}
+
+.sugam-chat-user,
+.sugam-chat-bot {
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--sugam-radius-md);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  max-width: 90%;
+}
+
+.sugam-chat-user {
+  align-self: flex-end;
+  background: var(--sugam-primary);
+  color: var(--sugam-primary-fg);
+  border-bottom-right-radius: 4px;
+}
+
+.sugam-chat-bot {
+  align-self: flex-start;
+  background: var(--sugam-teal-wash);
+  color: var(--sugam-ink);
+  border-bottom-left-radius: 4px;
+}
+
+.sugam-chat-pending {
+  opacity: 0.6;
+  letter-spacing: 0.15em;
+}
+
+.sugam-chat-form {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.sugam-chat-form input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font: inherit;
+  font-size: 0.88rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--sugam-border);
+  border-radius: var(--sugam-radius-sm);
+  background: var(--sugam-surface);
+  color: var(--sugam-ink);
+}
+
+.sugam-chat-form button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  flex-shrink: 0;
+  background: var(--sugam-primary);
+  color: var(--sugam-primary-fg);
+  border: none;
+  border-radius: var(--sugam-radius-sm);
+  cursor: pointer;
+}
+
+.sugam-chat-form button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+html.pref-high-contrast .sugam-chat-user {
+  background: #ffe000;
+  color: #000;
+}
+html.pref-high-contrast .sugam-chat-bot {
+  background: #111;
+  color: #fff;
+  border: 1px solid #ffe000;
+}
+html.pref-high-contrast .sugam-chat-form input {
+  background: #111;
+  color: #fff;
+  border-color: #ffe000;
+}
+html.pref-high-contrast .sugam-chat-form button {
+  background: #ffe000;
+  color: #000;
+}
+
 .sugam-command-list {
   margin: 0.4rem 0 0;
   padding-left: 1.1rem;
