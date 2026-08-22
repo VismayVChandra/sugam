@@ -31,6 +31,15 @@ export function isSpeechSupported(): boolean {
   return getRecognitionCtor() !== null
 }
 
+// Playback rate is a genuine global preference — someone who listens at 1.5x
+// wants that everywhere, not re-set per call — so it lives here as shared
+// state rather than being threaded as a parameter through every speak()
+// call site across the app. UiPrefsContext is the only writer.
+let globalSpeechRate = 1
+export function setGlobalSpeechRate(rate: number) {
+  globalSpeechRate = rate
+}
+
 function listenOnceWebSpeech(lang: string): Promise<SpeechResult> {
   const Ctor = getRecognitionCtor()
   if (!Ctor) {
@@ -66,6 +75,7 @@ function speakWebSpeech(text: string, lang: string): Promise<void> {
     }
     const utterance = new SpeechSynthesisUtterance(text)
     utterance.lang = lang
+    utterance.rate = globalSpeechRate
     utterance.onend = () => resolve()
     utterance.onerror = (e: SpeechSynthesisErrorEvent) => {
       // cancel() fires onerror on the utterance it interrupts. That's us
@@ -120,6 +130,10 @@ export async function speak(text: string, lang: string): Promise<void> {
   }
   if (myGeneration !== speakGeneration) return
   if (isSarvamConfigured) {
+    // Known gap: the speed preference isn't applied here — Sarvam's TTS API
+    // params for playback rate aren't confirmed, and this is a rare fallback
+    // path now that Web Speech is primary, so it wasn't worth risking a
+    // guessed field breaking the one voice output path that always works.
     await speakWithSarvam(text, lang)
     return
   }

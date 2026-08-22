@@ -20,10 +20,12 @@ interface AuthContextValue {
   configured: boolean
   /** undefined = hasn't answered the onboarding question yet; [] = answered "none". */
   accessibilityNeeds: AccessibilityNeed[] | undefined
+  /** undefined = never set — callers should treat this as the default rate (1x). */
+  speechRate: number | undefined
   signUp: (email: string, password: string) => Promise<AuthResult>
   signIn: (email: string, password: string) => Promise<AuthResult>
   logout: () => Promise<void>
-  saveAccessibilityNeeds: (needs: AccessibilityNeed[]) => Promise<void>
+  savePreferences: (needs: AccessibilityNeed[], speechRate: number) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -61,9 +63,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase?.auth.signOut()
   }
 
-  async function saveAccessibilityNeeds(needs: AccessibilityNeed[]) {
+  async function savePreferences(needs: AccessibilityNeed[], speechRate: number) {
     if (!supabase) return
-    const { data, error } = await supabase.auth.updateUser({ data: { accessibility_needs: needs } })
+    const { data, error } = await supabase.auth.updateUser({
+      data: { accessibility_needs: needs, speech_rate: speechRate },
+    })
     if (!error && data.user) {
       setSession((s) => (s ? { ...s, user: data.user } : s))
     }
@@ -71,6 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const rawNeeds = session?.user.user_metadata?.accessibility_needs
   const accessibilityNeeds: AccessibilityNeed[] | undefined = Array.isArray(rawNeeds) ? rawNeeds : undefined
+
+  const rawRate = session?.user.user_metadata?.speech_rate
+  const speechRate: number | undefined = typeof rawRate === 'number' ? rawRate : undefined
 
   return (
     <AuthContext.Provider
@@ -80,10 +87,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         configured: isSupabaseConfigured,
         accessibilityNeeds,
+        speechRate,
         signUp,
         signIn,
         logout,
-        saveAccessibilityNeeds,
+        savePreferences,
       }}
     >
       {children}

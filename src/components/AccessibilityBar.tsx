@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { Volume2, VolumeX, Type, Contrast, LogOut } from 'lucide-react'
+import { Volume2, VolumeX, Type, Contrast, LogOut, Gauge, SpellCheck, Settings } from 'lucide-react'
 import { useTargetSite } from '../context/TargetSiteContext'
-import { useUiPrefs } from '../context/UiPrefsContext'
+import { useUiPrefs, SPEECH_RATE_OPTIONS } from '../context/UiPrefsContext'
 import { useAuth } from '../context/AuthContext'
 import { speak, stopSpeaking } from '../lib/speech'
 import SugamWordmark from './SugamWordmark'
@@ -14,7 +14,8 @@ import './AccessibilityBar.css'
 
 export default function AccessibilityBar() {
   const site = useTargetSite()
-  const { largeText, highContrast, toggleLargeText, toggleHighContrast } = useUiPrefs()
+  const { largeText, highContrast, dyslexiaFont, speechRate, toggleLargeText, toggleHighContrast, toggleDyslexiaFont, setSpeechRate } =
+    useUiPrefs()
   const { logout } = useAuth()
   const [speaking, setSpeaking] = useState(false)
 
@@ -26,6 +27,12 @@ export default function AccessibilityBar() {
     }
     setSpeaking(true)
     speak(site.pageSummary(), 'en-IN').finally(() => setSpeaking(false))
+  }
+
+  function cycleSpeed() {
+    const i = SPEECH_RATE_OPTIONS.indexOf(speechRate)
+    const next = SPEECH_RATE_OPTIONS[(i + 1) % SPEECH_RATE_OPTIONS.length]
+    setSpeechRate(next)
   }
 
   return (
@@ -49,6 +56,10 @@ export default function AccessibilityBar() {
           {speaking ? <VolumeX size={15} aria-hidden="true" /> : <Volume2 size={15} aria-hidden="true" />}
           {speaking ? 'Stop reading' : 'Read this page aloud'}
         </button>
+        <button onClick={cycleSpeed} aria-label={`Reading speed: ${speechRate}x. Click to change.`}>
+          <Gauge size={15} aria-hidden="true" />
+          {speechRate}x speed
+        </button>
         <button aria-pressed={largeText} onClick={toggleLargeText}>
           <Type size={15} aria-hidden="true" />
           Large text
@@ -57,6 +68,14 @@ export default function AccessibilityBar() {
           <Contrast size={15} aria-hidden="true" />
           High contrast
         </button>
+        <button aria-pressed={dyslexiaFont} onClick={toggleDyslexiaFont}>
+          <SpellCheck size={15} aria-hidden="true" />
+          Dyslexia font
+        </button>
+        <NavLink to="/preferences" className="a11y-logout">
+          <Settings size={15} aria-hidden="true" />
+          Preferences
+        </NavLink>
         <NavLink to="/" onClick={logout} className="a11y-logout">
           <LogOut size={15} aria-hidden="true" />
           Log out

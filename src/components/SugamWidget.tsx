@@ -12,6 +12,7 @@ import { normalizePhone } from '../lib/phone'
 import { useTargetSite, type VoiceIntent } from '../context/TargetSiteContext'
 import { useUiPrefs } from '../context/UiPrefsContext'
 import { useWidgetOpen } from '../context/WidgetOpenContext'
+import { useAuth } from '../context/AuthContext'
 import { KYC_FIELDS, useKycForm, type KycValues } from '../context/KycFormContext'
 import SignPanel from './SignPanel'
 import SugamWordmark from './SugamWordmark'
@@ -35,7 +36,12 @@ function highlight(id: string) {
 }
 
 export default function SugamWidget() {
-  const [open, setOpen] = useState(false)
+  const { accessibilityNeeds } = useAuth()
+  // A vision-onboarded user shouldn't have to find and tap a floating
+  // button on every single page — open it for them. Re-evaluated on every
+  // mount (each portal navigation remounts this component), which is the
+  // point: "every visit," not just the first.
+  const [open, setOpen] = useState(() => accessibilityNeeds?.includes('vision') ?? false)
   const [tab, setTab] = useState<Tab>('voice')
   const { setWidgetOpen } = useWidgetOpen()
 

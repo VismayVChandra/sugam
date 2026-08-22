@@ -1,5 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
 
+@font-face {
+  font-family: 'OpenDyslexic';
+  font-weight: 400;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/opendyslexic@latest/latin-400-normal.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'OpenDyslexic';
+  font-weight: 700;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/opendyslexic@latest/latin-700-normal.woff2') format('woff2');
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
 
@@ -40,6 +53,15 @@ body {
 
 html.pref-large-text {
   font-size: 125%;
+}
+
+/* Overrides every explicit font-family in the app, including each portal's
+   deliberately-different branding font and Sugam's own serif headings —
+   readability wins over branding here, the same way high-contrast already
+   overrides each portal's colors. */
+html.pref-dyslexia-font,
+html.pref-dyslexia-font * {
+  font-family: 'OpenDyslexic', var(--sugam-font-sans) !important;
 }
 
 html.pref-high-contrast {

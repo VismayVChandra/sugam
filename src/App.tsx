@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'
+import PreferencesPage from './pages/PreferencesPage'
 import Dashboard from './pages/Dashboard'
 import GovPortal from './pages/GovPortal'
 import HealthPortal from './pages/HealthPortal'
@@ -22,6 +23,14 @@ export default function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route
+                path="/preferences"
+                element={
+                  <RequireAuth>
+                    <PreferencesPage />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/bank"
                 element={

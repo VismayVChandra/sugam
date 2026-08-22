@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { Eye, Ear, Accessibility, BookOpen } from 'lucide-react'
 import { useAuth, type AccessibilityNeed } from '../context/AuthContext'
+import { SPEECH_RATE_DEFAULT, SPEECH_RATE_OPTIONS } from '../context/UiPrefsContext'
 import SugamWordmark from '../components/SugamWordmark'
 import './AccessibilityOnboarding.css'
 
-// Asked once, right after signing in for the first time. The answer isn't
-// used to restrict anything — every tool stays available regardless — it
-// only sets better starting defaults, which the accessibility bar can
-// always override afterward. Skippable, because assuming everyone wants to
-// self-identify a disability before using an app is its own kind of barrier.
+// Asked once, right after signing in for the first time — and reachable
+// again anytime via "Preferences" in the accessibility bar (editMode),
+// pre-filled with whatever's already saved. The answers aren't used to
+// restrict anything — every tool stays available regardless — they only
+// set better starting defaults. Skippable, because assuming everyone wants
+// to self-identify a disability before using an app is its own kind of
+// barrier.
 
 const OPTIONS: { id: AccessibilityNeed; label: string; desc: string; Icon: typeof Eye }[] = [
   { id: 'vision', label: 'Vision', desc: 'Blind or low vision', Icon: Eye },
@@ -17,9 +20,16 @@ const OPTIONS: { id: AccessibilityNeed; label: string; desc: string; Icon: typeo
   { id: 'cognitive', label: 'Reading & cognitive', desc: 'Low literacy or reading difficulty', Icon: BookOpen },
 ]
 
-export default function AccessibilityOnboarding() {
-  const { saveAccessibilityNeeds } = useAuth()
-  const [selected, setSelected] = useState<Set<AccessibilityNeed>>(new Set())
+export default function AccessibilityOnboarding({
+  editMode = false,
+  onDone,
+}: {
+  editMode?: boolean
+  onDone?: () => void
+}) {
+  const { accessibilityNeeds, speechRate, savePreferences } = useAuth()
+  const [selected, setSelected] = useState<Set<AccessibilityNeed>>(new Set(accessibilityNeeds ?? []))
+  const [rate, setRate] = useState(speechRate ?? SPEECH_RATE_DEFAULT)
   const [saving, setSaving] = useState(false)
 
   function toggle(id: AccessibilityNeed) {
@@ -32,22 +42,24 @@ export default function AccessibilityOnboarding() {
   }
 
   // Applying the defaults themselves is handled by AccessibilityDefaultsApplier,
-  // which reacts to accessibilityNeeds changing — this just saves the answer.
+  // which reacts to accessibilityNeeds/speechRate changing — this just saves.
   async function handleContinue(needs: AccessibilityNeed[]) {
     setSaving(true)
-    await saveAccessibilityNeeds(needs)
+    await savePreferences(needs, rate)
     setSaving(false)
+    onDone?.()
   }
 
   return (
     <div className="onboard-screen">
       <main className="onboard-card">
         <SugamWordmark size={32} />
-        <p className="onboard-eyebrow">One quick question</p>
-        <h1>Does anything here apply to you?</h1>
+        <p className="onboard-eyebrow">{editMode ? 'Accessibility preferences' : 'One quick question'}</p>
+        <h1>{editMode ? 'Update your preferences' : 'Does anything here apply to you?'}</h1>
         <p className="onboard-lede">
-          This just sets better starting defaults — large text, high contrast, switch-scan navigation. Nothing is
-          locked to your answer, and every tool stays available either way. You can change or clear this anytime.
+          This just sets better starting defaults — large text, high contrast, switch-scan navigation, reading
+          speed. Nothing is locked to your answer, and every tool stays available either way. You can change or
+          clear this anytime{editMode ? '' : ' from the accessibility bar'}.
         </p>
 
         <div className="onboard-options">
@@ -71,13 +83,37 @@ export default function AccessibilityOnboarding() {
           })}
         </div>
 
+        <div className="onboard-speed">
+          <p className="onboard-speed-label">How fast should things be read aloud?</p>
+          <div className="onboard-speed-options" role="radiogroup" aria-label="Reading speed">
+            {SPEECH_RATE_OPTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                role="radio"
+                aria-checked={rate === s}
+                className={`onboard-speed-btn ${rate === s ? 'active' : ''}`}
+                onClick={() => setRate(s)}
+              >
+                {s === 1 ? 'Normal' : `${s}x`}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="onboard-actions">
           <button className="onboard-continue" onClick={() => handleContinue([...selected])} disabled={saving}>
-            {saving ? 'Saving…' : selected.size > 0 ? 'Continue with these defaults' : 'Continue'}
+            {saving ? 'Saving…' : editMode ? 'Save preferences' : selected.size > 0 ? 'Continue with these defaults' : 'Continue'}
           </button>
-          <button className="onboard-skip" onClick={() => handleContinue([])} disabled={saving}>
-            None of these — skip
-          </button>
+          {editMode ? (
+            <button className="onboard-skip" onClick={onDone} disabled={saving}>
+              Cancel
+            </button>
+          ) : (
+            <button className="onboard-skip" onClick={() => handleContinue([])} disabled={saving}>
+              None of these — skip
+            </button>
+          )}
         </div>
       </main>
     </div>
