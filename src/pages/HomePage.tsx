@@ -3,6 +3,7 @@ import { Landmark, GraduationCap, Cross, LogOut, ArrowRight, type LucideIcon } f
 import { useAuth } from '../context/AuthContext'
 import SugamWordmark from '../components/SugamWordmark'
 import LoginScreen from './LoginScreen'
+import AccessibilityOnboarding from './AccessibilityOnboarding'
 import './HomePage.css'
 
 const SITES: {
@@ -40,10 +41,11 @@ const SITES: {
 ]
 
 export default function HomePage() {
-  const { isAuthenticated, userEmail, loading, logout } = useAuth()
+  const { isAuthenticated, userEmail, loading, logout, accessibilityNeeds } = useAuth()
 
   if (loading) return null
   if (!isAuthenticated) return <LoginScreen />
+  if (accessibilityNeeds === undefined) return <AccessibilityOnboarding />
 
   return (
     <div className="home-screen">

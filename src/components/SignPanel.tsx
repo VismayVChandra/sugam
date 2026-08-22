@@ -20,7 +20,17 @@ interface MinimalHandLandmarker {
 const WASM_BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm'
 const MODEL_URL =
   'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task'
-const HOLD_FRAMES = 10
+
+// Detection is throttled rather than run on every animation frame (up to
+// 60/sec) — that was pegging the CPU hard enough to starve the rest of the
+// app, and made a held gesture take much longer in real time than intended
+// to register. ~8 checks/sec is plenty for a held pose.
+const DETECT_INTERVAL_MS = 120
+// Time-based, not frame-count-based: a fixed number of *frames* takes
+// wildly different amounts of real time depending on how fast the loop is
+// actually running under load. A fixed duration doesn't have that problem.
+const HOLD_MS = 850
+const COOLDOWN_MS = 1800
 
 export default function SignPanel() {
   const site = useTargetSite()
@@ -28,9 +38,11 @@ export default function SignPanel() {
   const landmarkerRef = useRef<MinimalHandLandmarker | null>(null)
   const rafRef = useRef<number>(0)
   const streamRef = useRef<MediaStream | null>(null)
+  const lastDetectTimeRef = useRef(0)
   const stableGestureRef = useRef<Gesture>('unclear')
-  const stableCountRef = useRef(0)
+  const stableSinceRef = useRef(0)
   const lastFiredRef = useRef<Gesture>('unclear')
+  const lastActionTimeRef = useRef(0)
 
   const [status, setStatus] = useState<Status>('idle')
   const [gesture, setGesture] = useState<Gesture>('unclear')
@@ -52,29 +64,40 @@ export default function SignPanel() {
   }
 
   function loop() {
+    rafRef.current = requestAnimationFrame(loop)
+
+    const now = performance.now()
+    if (now - lastDetectTimeRef.current < DETECT_INTERVAL_MS) return
+    lastDetectTimeRef.current = now
+
     const video = videoRef.current
     const landmarker = landmarkerRef.current
-    if (!video || !landmarker || video.readyState < 2) {
-      rafRef.current = requestAnimationFrame(loop)
-      return
-    }
+    if (!video || !landmarker || video.readyState < 2) return
 
-    const result = landmarker.detectForVideo(video, performance.now())
+    const result = landmarker.detectForVideo(video, now)
     const hand = result.landmarks?.[0]
     const g: Gesture = hand ? classifyGesture(hand) : 'unclear'
 
     if (g === stableGestureRef.current) {
-      stableCountRef.current++
+      // still the same reading — stableSinceRef keeps its original timestamp
     } else {
       stableGestureRef.current = g
-      stableCountRef.current = 0
+      stableSinceRef.current = now
     }
     setGesture(g)
 
-    // Require the gesture to hold steady for a beat, and fire once per
-    // transition — otherwise "open palm" re-triggers every single frame.
-    if (stableCountRef.current === HOLD_FRAMES && g !== 'unclear' && g !== lastFiredRef.current) {
+    // Require the gesture to have read the same for a real stretch of wall
+    // time, fire once per transition, and enforce a cooldown after any
+    // trigger — otherwise a noisy blip (tracking flickers to "unclear" and
+    // back) can re-fire the same gesture moments later.
+    if (
+      g !== 'unclear' &&
+      g !== lastFiredRef.current &&
+      now - stableSinceRef.current >= HOLD_MS &&
+      now - lastActionTimeRef.current > COOLDOWN_MS
+    ) {
       lastFiredRef.current = g
+      lastActionTimeRef.current = now
       if (g === 'open') {
         setLastAction('🖐 Open palm — reading page aloud')
         speak(site.pageSummary(), 'en-IN').catch(() => {})
@@ -84,8 +107,6 @@ export default function SignPanel() {
       }
     }
     if (g === 'unclear') lastFiredRef.current = 'unclear'
-
-    rafRef.current = requestAnimationFrame(loop)
   }
 
   async function startCamera() {

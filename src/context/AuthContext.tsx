@@ -7,6 +7,8 @@ import { supabase, isSupabaseConfigured } from '../lib/supabaseClient'
 // none of that logic lives in this app. This context only tracks the
 // resulting session and exposes sign up/in/out.
 
+export type AccessibilityNeed = 'vision' | 'hearing' | 'motor' | 'cognitive'
+
 interface AuthResult {
   error?: string
 }
@@ -16,9 +18,12 @@ interface AuthContextValue {
   userEmail: string | null
   loading: boolean
   configured: boolean
+  /** undefined = hasn't answered the onboarding question yet; [] = answered "none". */
+  accessibilityNeeds: AccessibilityNeed[] | undefined
   signUp: (email: string, password: string) => Promise<AuthResult>
   signIn: (email: string, password: string) => Promise<AuthResult>
   logout: () => Promise<void>
+  saveAccessibilityNeeds: (needs: AccessibilityNeed[]) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -56,6 +61,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase?.auth.signOut()
   }
 
+  async function saveAccessibilityNeeds(needs: AccessibilityNeed[]) {
+    if (!supabase) return
+    const { data, error } = await supabase.auth.updateUser({ data: { accessibility_needs: needs } })
+    if (!error && data.user) {
+      setSession((s) => (s ? { ...s, user: data.user } : s))
+    }
+  }
+
+  const rawNeeds = session?.user.user_metadata?.accessibility_needs
+  const accessibilityNeeds: AccessibilityNeed[] | undefined = Array.isArray(rawNeeds) ? rawNeeds : undefined
+
   return (
     <AuthContext.Provider
       value={{
@@ -63,9 +79,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         userEmail: session?.user.email ?? null,
         loading,
         configured: isSupabaseConfigured,
+        accessibilityNeeds,
         signUp,
         signIn,
         logout,
+        saveAccessibilityNeeds,
       }}
     >
       {children}

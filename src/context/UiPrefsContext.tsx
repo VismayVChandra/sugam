@@ -3,8 +3,13 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 interface UiPrefsValue {
   largeText: boolean
   highContrast: boolean
+  switchScan: boolean
   toggleLargeText: () => void
   toggleHighContrast: () => void
+  toggleSwitchScan: () => void
+  setLargeText: (v: boolean) => void
+  setHighContrast: (v: boolean) => void
+  setSwitchScan: (v: boolean) => void
 }
 
 const UiPrefsContext = createContext<UiPrefsValue | null>(null)
@@ -12,6 +17,7 @@ const UiPrefsContext = createContext<UiPrefsValue | null>(null)
 export function UiPrefsProvider({ children }: { children: ReactNode }) {
   const [largeText, setLargeText] = useState(false)
   const [highContrast, setHighContrast] = useState(false)
+  const [switchScan, setSwitchScan] = useState(false)
 
   // Toggled on <html> rather than a wrapper div: most of the app's sizing
   // uses rem units, which only respond to the root font-size, not an
@@ -30,8 +36,13 @@ export function UiPrefsProvider({ children }: { children: ReactNode }) {
       value={{
         largeText,
         highContrast,
+        switchScan,
         toggleLargeText: () => setLargeText((v) => !v),
         toggleHighContrast: () => setHighContrast((v) => !v),
+        toggleSwitchScan: () => setSwitchScan((v) => !v),
+        setLargeText,
+        setHighContrast,
+        setSwitchScan,
       }}
     >
       {children}

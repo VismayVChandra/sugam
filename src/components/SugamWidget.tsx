@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { X, Mic, FileText, ClipboardList, Hand } from 'lucide-react'
-import { isSpeechSupported, listenOnce, speak, SUPPORTED_LANGUAGES } from '../lib/speech'
+import { isSpeechSupported, listenOnce, speak, SUPPORTED_LANGUAGES, APPROX_RECORD_MS } from '../lib/speech'
 import { matchIntent } from '../lib/intentMatch'
 import { buildUniversalIntents } from '../lib/universalIntents'
 import { extractText } from '../lib/ocr'
@@ -9,6 +9,7 @@ import { extractKycFields } from '../lib/extractFields'
 import { normalizePhone } from '../lib/phone'
 import { useTargetSite } from '../context/TargetSiteContext'
 import { useUiPrefs } from '../context/UiPrefsContext'
+import { useWidgetOpen } from '../context/WidgetOpenContext'
 import { KYC_FIELDS, useKycForm, type KycValues } from '../context/KycFormContext'
 import SignPanel from './SignPanel'
 import SugamWordmark from './SugamWordmark'
@@ -34,6 +35,12 @@ function highlight(id: string) {
 export default function SugamWidget() {
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState<Tab>('voice')
+  const { setWidgetOpen } = useWidgetOpen()
+
+  useEffect(() => {
+    setWidgetOpen(open)
+    return () => setWidgetOpen(false)
+  }, [open, setWidgetOpen])
 
   return (
     <>
@@ -82,11 +89,13 @@ export default function SugamWidget() {
   )
 }
 
+type VoiceStatus = 'idle' | 'recording' | 'thinking'
+
 function VoicePanel() {
   const site = useTargetSite()
   const uiPrefs = useUiPrefs()
   const [lang, setLang] = useState<string>(SUPPORTED_LANGUAGES[0].code)
-  const [listening, setListening] = useState(false)
+  const [status, setStatus] = useState<VoiceStatus>('idle')
   const [transcript, setTranscript] = useState('')
   const [answer, setAnswer] = useState('')
   const [error, setError] = useState('')
@@ -94,13 +103,18 @@ function VoicePanel() {
   async function handleMic() {
     setError('')
     setAnswer('')
+    setTranscript('')
     if (!isSpeechSupported()) {
       setError('Speech recognition is not supported in this browser. Try Chrome.')
       return
     }
-    setListening(true)
+    setStatus('recording')
+    // Approximate progress cue only — the real STT call has its own timing
+    // regardless of which engine actually ends up running underneath.
+    const toThinking = APPROX_RECORD_MS > 0 ? window.setTimeout(() => setStatus('thinking'), APPROX_RECORD_MS) : null
     try {
       const { transcript: t } = await listenOnce(lang)
+      setStatus('thinking')
       setTranscript(t)
       const allIntents = [...site.intents, ...buildUniversalIntents(uiPrefs)]
       const intent = matchIntent(t, allIntents)
@@ -118,7 +132,8 @@ function VoicePanel() {
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong.')
     } finally {
-      setListening(false)
+      if (toThinking) window.clearTimeout(toThinking)
+      setStatus('idle')
     }
   }
 
@@ -135,8 +150,8 @@ function VoicePanel() {
         </select>
       </label>
 
-      <button className="sugam-mic" onClick={handleMic} disabled={listening}>
-        {listening ? 'Listening…' : '🎙 Speak a command'}
+      <button className="sugam-mic" onClick={handleMic} disabled={status !== 'idle'}>
+        {status === 'recording' ? '🔴 Recording — speak now…' : status === 'thinking' ? 'Thinking…' : '🎙 Speak a command'}
       </button>
 
       <details className="sugam-raw">
